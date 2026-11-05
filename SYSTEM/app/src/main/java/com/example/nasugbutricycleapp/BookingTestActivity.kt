@@ -1,4 +1,3 @@
-
 package com.example.nasugbutricycleapp
 
 import android.app.Activity

@@ -1,12 +1,9 @@
-
 rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // ==========================================
     // HELPER FUNCTIONS
-    // ==========================================
 
     function signedIn() {
       return request.auth != null;
@@ -61,9 +58,7 @@ service cloud.firestore {
         && get(contactPath(bookingId)).data.passengerId == request.auth.uid;
     }
 
-    // ==========================================
     // USERS
-    // ==========================================
 
     match /users/{userId} {
 
@@ -182,9 +177,7 @@ service cloud.firestore {
       allow delete: if false;
     }
 
-    // ==========================================
     // BOOKINGS
-    // ==========================================
 
     match /bookings/{bookingId} {
 
@@ -318,9 +311,8 @@ service cloud.firestore {
       allow delete: if false;
     }
 
-    // ==========================================
     // BOOKING CONTACTS
-    // ==========================================
+
 
     match /bookingContacts/{bookingId} {
 
@@ -363,9 +355,9 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
-    // ==========================================
+
     // DRIVER ACTIVE BOOKINGS
-    // ==========================================
+
 
     match /driverActiveBookings/{driverId} {
 
@@ -429,9 +421,7 @@ service cloud.firestore {
         && getAfter(bookingPath(resource.data.bookingId)).data.status == "COMPLETED";
     }
 
-    // ==========================================
     // PASSENGER ACTIVE BOOKINGS
-    // ==========================================
 
     match /passengerActiveBookings/{passengerId} {
 
