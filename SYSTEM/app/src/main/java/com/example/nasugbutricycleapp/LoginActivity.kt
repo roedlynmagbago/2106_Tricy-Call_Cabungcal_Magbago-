@@ -8,11 +8,18 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.nasugbutricycleapp.service.AuthService
+import com.example.nasugbutricycleapp.firebase.FirebaseManager
 
 class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        FirebaseManager.connectToEmulators()
+
+        android.util.Log.d("FIREBASE_CHECK", "Auth emulator: 192.168.1.25:9099")
+        android.util.Log.d("FIREBASE_CHECK", "Firestore emulator: 192.168.1.25:8080")
+
         setContentView(R.layout.login)
 
         val etEmail = findViewById<EditText>(R.id.etEmail)
@@ -21,7 +28,6 @@ class LoginActivity : AppCompatActivity() {
         val tvCreateAccount =
             findViewById<TextView>(R.id.tvCreateAccount)
 
-        // Login button
         btnLogin.setOnClickListener {
             val email = etEmail.text.toString().trim()
             val password = etPassword.text.toString()
@@ -62,6 +68,7 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
         }
+
         // Open Create Account screen
         tvCreateAccount.setOnClickListener {
             startActivity(

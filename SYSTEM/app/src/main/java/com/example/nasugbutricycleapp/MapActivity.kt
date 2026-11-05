@@ -1,43 +1,42 @@
 package com.example.nasugbutricycleapp
 
-import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import org.maplibre.android.MapLibre
-import org.maplibre.android.maps.MapView
-import org.maplibre.android.camera.CameraPosition
-import org.maplibre.android.geometry.LatLng
-import com.example.nasugbutricycleapp.gis.GISManager
 import android.Manifest
 import android.content.pm.PackageManager
+import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.example.nasugbutricycleapp.gis.GISManager
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
-import org.maplibre.android.style.sources.GeoJsonSource
+import org.maplibre.android.MapLibre
+import org.maplibre.android.camera.CameraPosition
+import org.maplibre.android.geometry.LatLng
+import org.maplibre.android.maps.MapLibreMap
+import org.maplibre.android.maps.MapView
 import org.maplibre.android.style.layers.CircleLayer
 import org.maplibre.android.style.layers.PropertyFactory
+import org.maplibre.android.style.sources.GeoJsonSource
 import org.maplibre.geojson.Point
 
 class MapActivity : AppCompatActivity() {
 
     private lateinit var mapView: MapView
-
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private var mapLibreMap: MapLibreMap? = null
 
     private val locationPermissionLauncher =
         registerForActivityResult(
             ActivityResultContracts.RequestMultiplePermissions()
         ) { permissions ->
-
-            val fineLocationGranted =
+            val fineGranted =
                 permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true
-
-            val coarseLocationGranted =
+            val coarseGranted =
                 permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
 
-            if (fineLocationGranted || coarseLocationGranted) {
+            if (fineGranted || coarseGranted) {
                 getCurrentLocation()
             }
         }
@@ -45,50 +44,49 @@ class MapActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Initialize MapLibre
         MapLibre.getInstance(this)
-
         setContentView(R.layout.activity_map)
 
         mapView = findViewById(R.id.mapView)
         mapView.onCreate(savedInstanceState)
 
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        fusedLocationClient =
+            LocationServices.getFusedLocationProviderClient(this)
 
-        checkLocationPermission()
-        // Load the GIS map
         mapView.getMapAsync { map ->
+            mapLibreMap = map
 
-            map.setStyle("https://tiles.openfreemap.org/styles/liberty") {
+            val nasugbu = LatLng(14.0669, 120.6318)
 
-                // Initial map view: Nasugbu, Batangas
-                val nasugbu = LatLng(
-                    14.0669,
-                    120.6318
-                )
+            map.cameraPosition = CameraPosition.Builder()
+                .target(nasugbu)
+                .zoom(12.0)
+                .build()
 
-                map.cameraPosition = CameraPosition.Builder()
-                    .target(nasugbu)
-                    .zoom(12.0)
-                    .build()
-
+            map.setStyle(
+                "https://tiles.openfreemap.org/styles/liberty"
+            ) {
+                // Load your GIS layers after the map style is ready.
                 GISManager.loadGISLayers(map)
+
+                // Ask for location permission after the map is ready.
+                checkLocationPermission()
             }
         }
     }
-    private fun checkLocationPermission() {
 
-        val fineLocationGranted = ContextCompat.checkSelfPermission(
+    private fun checkLocationPermission() {
+        val fineGranted = ContextCompat.checkSelfPermission(
             this,
             Manifest.permission.ACCESS_FINE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
 
-        val coarseLocationGranted = ContextCompat.checkSelfPermission(
+        val coarseGranted = ContextCompat.checkSelfPermission(
             this,
             Manifest.permission.ACCESS_COARSE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
 
-        if (fineLocationGranted || coarseLocationGranted) {
+        if (fineGranted || coarseGranted) {
             getCurrentLocation()
         } else {
             locationPermissionLauncher.launch(
@@ -101,68 +99,68 @@ class MapActivity : AppCompatActivity() {
     }
 
     private fun getCurrentLocation() {
-
-        val fineLocationGranted = ContextCompat.checkSelfPermission(
+        val fineGranted = ContextCompat.checkSelfPermission(
             this,
             Manifest.permission.ACCESS_FINE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
 
-        val coarseLocationGranted = ContextCompat.checkSelfPermission(
+        val coarseGranted = ContextCompat.checkSelfPermission(
             this,
             Manifest.permission.ACCESS_COARSE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
 
-        if (!fineLocationGranted && !coarseLocationGranted) {
-            return
-        }
+        if (!fineGranted && !coarseGranted) return
 
+        val map = mapLibreMap ?: return
         val cancellationTokenSource = CancellationTokenSource()
 
         fusedLocationClient.getCurrentLocation(
             Priority.PRIORITY_HIGH_ACCURACY,
             cancellationTokenSource.token
         ).addOnSuccessListener { location ->
+            if (location == null || isFinishing || isDestroyed) return@addOnSuccessListener
 
-            if (location != null) {
+            val currentLocation = LatLng(
+                location.latitude,
+                location.longitude
+            )
 
-                val currentLocation = LatLng(
-                    location.latitude,
-                    location.longitude
+            map.cameraPosition = CameraPosition.Builder()
+                .target(currentLocation)
+                .zoom(16.0)
+                .build()
+
+            map.getStyle { style ->
+                val point = Point.fromLngLat(
+                    location.longitude,
+                    location.latitude
                 )
 
-                mapView.getMapAsync { map ->
+                val sourceId = "current-location-source"
+                val layerId = "current-location-layer"
 
-                    map.cameraPosition = CameraPosition.Builder()
-                        .target(currentLocation)
-                        .zoom(16.0)
-                        .build()
+                // Avoid adding duplicate sources or layers.
+                if (style.getSource(sourceId) == null) {
+                    style.addSource(
+                        GeoJsonSource(sourceId, point)
+                    )
+                } else {
+                    (style.getSource(sourceId) as? GeoJsonSource)
+                        ?.setGeoJson(point)
+                }
 
-                    map.getStyle { style ->
+                if (style.getLayer(layerId) == null) {
+                    val layer = CircleLayer(
+                        layerId,
+                        sourceId
+                    ).withProperties(
+                        PropertyFactory.circleRadius(9f),
+                        PropertyFactory.circleColor("#00BCD4"),
+                        PropertyFactory.circleStrokeWidth(3f),
+                        PropertyFactory.circleStrokeColor("#FFFFFF")
+                    )
 
-                        val point = Point.fromLngLat(
-                            location.longitude,
-                            location.latitude
-                        )
-
-                        val source = GeoJsonSource(
-                            "current-location-source",
-                            point
-                        )
-
-                        style.addSource(source)
-
-                        val layer = CircleLayer(
-                            "current-location-layer",
-                            "current-location-source"
-                        ).withProperties(
-                            PropertyFactory.circleRadius(9f),
-                            PropertyFactory.circleColor("#00BCD4"),
-                            PropertyFactory.circleStrokeWidth(3f),
-                            PropertyFactory.circleStrokeColor("#FFFFFF")
-                        )
-
-                        style.addLayer(layer)
-                    }
+                    style.addLayer(layer)
                 }
             }
         }

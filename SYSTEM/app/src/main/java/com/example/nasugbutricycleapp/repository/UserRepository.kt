@@ -1,56 +1,77 @@
 package com.example.nasugbutricycleapp.repository
 
+import com.example.nasugbutricycleapp.firebase.FirebaseManager
 import com.example.nasugbutricycleapp.model.User
 
 object UserRepository {
 
-    private val users = mutableListOf<User>()
+    fun getCurrentUser(
+        onResult: (User?, String?) -> Unit
+    ) {
+        val firebaseUser = FirebaseManager.auth.currentUser
 
-    fun register(
+        if (firebaseUser == null) {
+            onResult(null, "No user is currently logged in.")
+            return
+        }
+        getUserById(firebaseUser.uid, onResult)
+    }
+
+    fun getUserById(
+        userId: String,
+        onResult: (User?, String?) -> Unit
+    ) {
+        FirebaseManager.db.collection("users")
+            .document(userId)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    val user = document.toObject(User::class.java)
+                    onResult(user, null)
+                } else {
+                    onResult(null, "User not found.")
+                }
+            }
+            .addOnFailureListener { error ->
+                onResult(
+                    null,
+                    error.localizedMessage ?: "Unable to load user."
+                )
+            }
+    }
+
+    fun updateProfile(
         name: String,
         username: String,
         phoneNumber: String,
-        password: String,
-        role: String = "PASSENGER"
-    ): Boolean {
-
-        if (usernameExists(username)) {
-            return false
+        onResult: (Boolean, String) -> Unit
+    ) {
+        val uid = FirebaseManager.auth.currentUser?.uid
+        if (uid == null) {
+            onResult(false, "Please log in first.")
+            return
+        }
+        if (name.isBlank() || username.isBlank()) {
+            onResult(false, "Name and username are required.")
+            return
         }
 
-        val user = User(
-            userId = users.size + 1,
-            name = name,
-            username = username,
-            phoneNumber = phoneNumber,
-            password = password,
-            role = role
+        val updates = mapOf(
+            "name" to name.trim(),
+            "username" to username.trim(),
+            "phoneNumber" to phoneNumber.trim()
         )
-
-        users.add(user)
-        return true
-    }
-
-    fun login(username: String, password: String): User? {
-        return users.find { user ->
-            user.username.equals(username, ignoreCase = true) &&
-                    user.checkPassword(password)
-        }
-    }
-
-    fun usernameExists(username: String): Boolean {
-        return users.any { user ->
-            user.username.equals(username, ignoreCase = true)
-        }
-    }
-
-    fun getUserById(userId: Int): User? {
-        return users.find { user ->
-            user.userId == userId
-        }
-    }
-
-    fun getAllUsers(): List<User> {
-        return users.toList()
+        FirebaseManager.db.collection("users")
+            .document(uid)
+            .update(updates)
+            .addOnSuccessListener {
+                onResult(true, "Profile updated successfully.")
+            }
+            .addOnFailureListener { error ->
+                onResult(
+                    false,
+                    error.localizedMessage ?: "Unable to update profile."
+                )
+            }
     }
 }

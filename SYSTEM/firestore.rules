@@ -1,0 +1,503 @@
+
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ==========================================
+    // HELPER FUNCTIONS
+    // ==========================================
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function userPath() {
+      return /databases/$(database)/documents/users/$(request.auth.uid);
+    }
+
+    function bookingPath(bookingId) {
+      return /databases/$(database)/documents/bookings/$(bookingId);
+    }
+
+    function contactPath(bookingId) {
+      return /databases/$(database)/documents/bookingContacts/$(bookingId);
+    }
+
+    function driverActivePath(driverId) {
+      return /databases/$(database)/documents/driverActiveBookings/$(driverId);
+    }
+
+    function passengerActivePath(passengerId) {
+      return /databases/$(database)/documents/passengerActiveBookings/$(passengerId);
+    }
+
+    function activeRole(role) {
+      return signedIn()
+        && exists(userPath())
+        && get(userPath()).data.role == role
+        && get(userPath()).data.status == "ACTIVE";
+    }
+
+    function isAdmin() {
+      return signedIn()
+        && exists(userPath())
+        && get(userPath()).data.role in ["ADMIN", "SUPER_ADMIN"]
+        && get(userPath()).data.status == "ACTIVE";
+    }
+
+    function isSuperAdmin() {
+      return activeRole("SUPER_ADMIN");
+    }
+
+    function isApprovedDriver() {
+      return activeRole("DRIVER")
+        && get(userPath()).data.driverApplicationStatus == "APPROVED";
+    }
+
+    function isBookingPassenger(bookingId) {
+      return signedIn()
+        && exists(contactPath(bookingId))
+        && get(contactPath(bookingId)).data.passengerId == request.auth.uid;
+    }
+
+    // ==========================================
+    // USERS
+    // ==========================================
+
+    match /users/{userId} {
+
+      // CREATE USER PROFILE
+      allow create: if signedIn()
+        && request.auth.uid == userId
+        && request.resource.data.keys().hasOnly([
+          "userId",
+          "name",
+          "username",
+          "email",
+          "phoneNumber",
+          "role",
+          "status",
+          "driverApplicationStatus",
+          "toda",
+          "address"
+        ])
+        && request.resource.data.keys().hasAll([
+          "userId",
+          "name",
+          "username",
+          "email",
+          "phoneNumber",
+          "role",
+          "status",
+          "driverApplicationStatus",
+          "toda",
+          "address"
+        ])
+        && request.resource.data.userId == userId
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.username is string
+        && request.resource.data.email is string
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.phoneNumber is string
+        && request.resource.data.toda is string
+        && request.resource.data.address is string
+        && request.resource.data.role == "PASSENGER"
+        && request.resource.data.status == "ACTIVE"
+        && request.resource.data.driverApplicationStatus in ["NONE", "PENDING"];
+
+      // READ OWN PROFILE OR ADMIN READS USER
+      allow get: if signedIn()
+        && (
+          request.auth.uid == userId
+          || isAdmin()
+        );
+
+      allow list: if isAdmin();
+
+      // UPDATE USER PROFILE OR ADMIN APPROVAL
+      allow update: if (
+
+        // USER UPDATES OWN PROFILE
+        (
+          signedIn()
+          && request.auth.uid == userId
+          && request.resource.data.diff(resource.data)
+            .affectedKeys().hasOnly([
+              "name",
+              "username",
+              "phoneNumber"
+            ])
+          && request.resource.data.name is string
+          && request.resource.data.name.size() > 0
+          && request.resource.data.username is string
+          && request.resource.data.username.size() > 0
+          && request.resource.data.phoneNumber is string
+          && (
+            request.resource.data.phoneNumber == ""
+            || request.resource.data.phoneNumber.matches("^09[0-9]{9}$")
+          )
+        )
+
+        ||
+
+        // ADMIN APPROVES OR REJECTS DRIVER
+        (
+          isAdmin()
+          && request.auth.uid != userId
+          && resource.data.role == "PASSENGER"
+          && resource.data.driverApplicationStatus == "PENDING"
+          && request.resource.data.diff(resource.data)
+            .affectedKeys().hasOnly([
+              "role",
+              "driverApplicationStatus"
+            ])
+          && (
+            (
+              request.resource.data.role == "DRIVER"
+              && request.resource.data.driverApplicationStatus == "APPROVED"
+            )
+            ||
+            (
+              request.resource.data.role == "PASSENGER"
+              && request.resource.data.driverApplicationStatus == "REJECTED"
+            )
+          )
+        )
+
+        ||
+
+        // SUPER ADMIN ASSIGNS ADMIN ROLE
+        (
+          isSuperAdmin()
+          && request.auth.uid != userId
+          && resource.data.role == "PASSENGER"
+          && request.resource.data.diff(resource.data)
+            .affectedKeys().hasOnly(["role"])
+          && request.resource.data.role == "ADMIN"
+        )
+      );
+
+      allow delete: if false;
+    }
+
+    // ==========================================
+    // BOOKINGS
+    // ==========================================
+
+    match /bookings/{bookingId} {
+
+      // PASSENGER CREATES BOOKING
+      allow create: if activeRole("PASSENGER")
+        && request.resource.data.keys().hasOnly([
+          "bookingId",
+          "pickupLocation",
+          "pickupLatitude",
+          "pickupLongitude",
+          "destination",
+          "destinationLatitude",
+          "destinationLongitude",
+          "driverId",
+          "status",
+          "createdAt"
+        ])
+        && request.resource.data.keys().hasAll([
+          "bookingId",
+          "pickupLocation",
+          "pickupLatitude",
+          "pickupLongitude",
+          "destination",
+          "destinationLatitude",
+          "destinationLongitude",
+          "driverId",
+          "status",
+          "createdAt"
+        ])
+        && request.resource.data.bookingId == bookingId
+        && request.resource.data.status == "PENDING"
+        && request.resource.data.driverId == ""
+        && request.resource.data.pickupLocation is string
+        && request.resource.data.pickupLocation.size() > 0
+        && request.resource.data.destination is string
+        && request.resource.data.destination.size() > 0
+        && request.resource.data.pickupLatitude is number
+        && request.resource.data.pickupLongitude is number
+        && request.resource.data.destinationLatitude is number
+        && request.resource.data.destinationLongitude is number
+        && request.resource.data.pickupLatitude >= -90
+        && request.resource.data.pickupLatitude <= 90
+        && request.resource.data.pickupLongitude >= -180
+        && request.resource.data.pickupLongitude <= 180
+        && request.resource.data.destinationLatitude >= -90
+        && request.resource.data.destinationLatitude <= 90
+        && request.resource.data.destinationLongitude >= -180
+        && request.resource.data.destinationLongitude <= 180
+        && !(request.resource.data.pickupLatitude == 0
+          && request.resource.data.pickupLongitude == 0)
+        && !(request.resource.data.destinationLatitude == 0
+          && request.resource.data.destinationLongitude == 0)
+        && request.resource.data.createdAt is number
+        && getAfter(contactPath(bookingId)).data.passengerId == request.auth.uid
+        && !exists(passengerActivePath(request.auth.uid))
+        && getAfter(passengerActivePath(request.auth.uid)).data.bookingId == bookingId
+        && getAfter(passengerActivePath(request.auth.uid)).data.passengerId == request.auth.uid;
+
+      // READ BOOKING
+      allow get: if isApprovedDriver()
+        || isAdmin()
+        || isBookingPassenger(bookingId);
+
+      // QUERY AVAILABLE BOOKINGS
+      allow list: if isApprovedDriver() || isAdmin();
+
+      // UPDATE BOOKING
+      allow update: if (
+
+        // DRIVER ACCEPTS BOOKING
+        (
+          isApprovedDriver()
+          && resource.data.status == "PENDING"
+          && resource.data.driverId == ""
+          && request.resource.data.status == "ACCEPTED"
+          && request.resource.data.driverId == request.auth.uid
+          && request.resource.data.diff(resource.data)
+            .affectedKeys().hasOnly(["status", "driverId"])
+          && !exists(driverActivePath(request.auth.uid))
+          && getAfter(driverActivePath(request.auth.uid)).data.bookingId == bookingId
+          && getAfter(driverActivePath(request.auth.uid)).data.driverId == request.auth.uid
+        )
+
+        ||
+
+        // DRIVER COMPLETES BOOKING
+        (
+          isApprovedDriver()
+          && resource.data.status == "ACCEPTED"
+          && resource.data.driverId == request.auth.uid
+          && request.resource.data.status == "COMPLETED"
+          && request.resource.data.diff(resource.data)
+            .affectedKeys().hasOnly(["status"])
+          && exists(contactPath(bookingId))
+          && get(contactPath(bookingId)).data.passengerId is string
+          && exists(driverActivePath(request.auth.uid))
+          && get(driverActivePath(request.auth.uid)).data.bookingId == bookingId
+          && exists(passengerActivePath(
+            get(contactPath(bookingId)).data.passengerId
+          ))
+          && get(passengerActivePath(
+            get(contactPath(bookingId)).data.passengerId
+          )).data.bookingId == bookingId
+          && get(passengerActivePath(
+            get(contactPath(bookingId)).data.passengerId
+          )).data.passengerId == get(contactPath(bookingId)).data.passengerId
+          && !existsAfter(driverActivePath(request.auth.uid))
+          && !existsAfter(passengerActivePath(
+            get(contactPath(bookingId)).data.passengerId
+          ))
+        )
+
+        ||
+
+        // PASSENGER CANCELS PENDING BOOKING
+        (
+          activeRole("PASSENGER")
+          && isBookingPassenger(bookingId)
+          && resource.data.status == "PENDING"
+          && resource.data.driverId == ""
+          && request.resource.data.status == "CANCELLED"
+          && request.resource.data.diff(resource.data)
+            .affectedKeys().hasOnly(["status"])
+          && exists(passengerActivePath(request.auth.uid))
+          && get(passengerActivePath(request.auth.uid)).data.bookingId == bookingId
+          && get(passengerActivePath(request.auth.uid)).data.passengerId == request.auth.uid
+          && !existsAfter(passengerActivePath(request.auth.uid))
+        )
+      );
+
+      allow delete: if false;
+    }
+
+    // ==========================================
+    // BOOKING CONTACTS
+    // ==========================================
+
+    match /bookingContacts/{bookingId} {
+
+      // CREATE PASSENGER CONTACT
+      allow create: if activeRole("PASSENGER")
+        && request.resource.data.keys().hasOnly([
+          "bookingId",
+          "passengerId",
+          "passengerName",
+          "passengerPhone"
+        ])
+        && request.resource.data.keys().hasAll([
+          "bookingId",
+          "passengerId",
+          "passengerName",
+          "passengerPhone"
+        ])
+        && request.resource.data.bookingId == bookingId
+        && request.resource.data.passengerId == request.auth.uid
+        && request.resource.data.passengerName is string
+        && request.resource.data.passengerName == get(userPath()).data.name
+        && request.resource.data.passengerPhone is string
+        && request.resource.data.passengerPhone.matches("^09[0-9]{9}$")
+        && getAfter(bookingPath(bookingId)).data.bookingId == bookingId;
+
+      // READ CONTACT
+      allow get: if signedIn()
+        && (
+          resource.data.passengerId == request.auth.uid
+          || isAdmin()
+          || (
+            isApprovedDriver()
+            && exists(bookingPath(bookingId))
+            && get(bookingPath(bookingId)).data.driverId == request.auth.uid
+            && get(bookingPath(bookingId)).data.status == "ACCEPTED"
+          )
+        );
+
+      allow list: if false;
+      allow update, delete: if false;
+    }
+
+    // ==========================================
+    // DRIVER ACTIVE BOOKINGS
+    // ==========================================
+
+    match /driverActiveBookings/{driverId} {
+
+      allow get: if signedIn()
+        && (
+          request.auth.uid == driverId
+          || isAdmin()
+        );
+
+      allow list: if false;
+
+      // DRIVER CREATES ACTIVE BOOKING
+      allow create: if isApprovedDriver()
+        && request.auth.uid == driverId
+        && request.resource.data.keys().hasOnly([
+          "bookingId",
+          "driverId"
+        ])
+        && request.resource.data.keys().hasAll([
+          "bookingId",
+          "driverId"
+        ])
+        && request.resource.data.driverId == driverId
+        && request.resource.data.bookingId is string
+        && request.resource.data.bookingId.size() > 0
+        && exists(bookingPath(request.resource.data.bookingId))
+        && get(bookingPath(request.resource.data.bookingId)).data.status == "PENDING"
+        && get(bookingPath(request.resource.data.bookingId)).data.driverId == ""
+        && getAfter(bookingPath(request.resource.data.bookingId)).data.status == "ACCEPTED"
+        && getAfter(bookingPath(request.resource.data.bookingId)).data.driverId == driverId;
+
+      // DRIVER REPLACES EMPTY ACTIVE BOOKING RECORD
+      allow update: if isApprovedDriver()
+        && request.auth.uid == driverId
+        && resource.data.bookingId == ""
+        && resource.data.driverId == driverId
+        && request.resource.data.keys().hasOnly([
+          "bookingId",
+          "driverId"
+        ])
+        && request.resource.data.keys().hasAll([
+          "bookingId",
+          "driverId"
+        ])
+        && request.resource.data.driverId == driverId
+        && request.resource.data.bookingId is string
+        && request.resource.data.bookingId.size() > 0
+        && exists(bookingPath(request.resource.data.bookingId))
+        && get(bookingPath(request.resource.data.bookingId)).data.status == "PENDING"
+        && get(bookingPath(request.resource.data.bookingId)).data.driverId == ""
+        && getAfter(bookingPath(request.resource.data.bookingId)).data.status == "ACCEPTED"
+        && getAfter(bookingPath(request.resource.data.bookingId)).data.driverId == driverId;
+
+      // DRIVER COMPLETES BOOKING
+      allow delete: if isApprovedDriver()
+        && request.auth.uid == driverId
+        && resource.data.driverId == driverId
+        && resource.data.bookingId is string
+        && get(bookingPath(resource.data.bookingId)).data.status == "ACCEPTED"
+        && get(bookingPath(resource.data.bookingId)).data.driverId == driverId
+        && getAfter(bookingPath(resource.data.bookingId)).data.status == "COMPLETED";
+    }
+
+    // ==========================================
+    // PASSENGER ACTIVE BOOKINGS
+    // ==========================================
+
+    match /passengerActiveBookings/{passengerId} {
+
+      // READ ACTIVE BOOKING
+      allow get: if signedIn()
+        && (
+          request.auth.uid == passengerId
+          || isAdmin()
+          || (
+            isApprovedDriver()
+            && resource.data.bookingId is string
+            && exists(contactPath(resource.data.bookingId))
+            && get(contactPath(resource.data.bookingId)).data.passengerId == passengerId
+            && exists(bookingPath(resource.data.bookingId))
+            && get(bookingPath(resource.data.bookingId)).data.driverId == request.auth.uid
+            && get(bookingPath(resource.data.bookingId)).data.status == "ACCEPTED"
+          )
+        );
+
+      allow list: if false;
+
+      // PASSENGER CREATES ACTIVE BOOKING
+      allow create: if activeRole("PASSENGER")
+        && request.auth.uid == passengerId
+        && request.resource.data.keys().hasOnly([
+          "bookingId",
+          "passengerId"
+        ])
+        && request.resource.data.keys().hasAll([
+          "bookingId",
+          "passengerId"
+        ])
+        && request.resource.data.passengerId == passengerId
+        && request.resource.data.bookingId is string
+        && request.resource.data.bookingId.size() > 0
+        && !exists(bookingPath(request.resource.data.bookingId))
+        && getAfter(bookingPath(request.resource.data.bookingId)).data.status == "PENDING"
+        && getAfter(contactPath(request.resource.data.bookingId)).data.passengerId == passengerId;
+
+      allow update: if false;
+
+      // CANCEL OR COMPLETE BOOKING
+      allow delete: if signedIn()
+        && resource.data.passengerId == passengerId
+        && resource.data.bookingId is string
+        && (
+
+          // PASSENGER CANCELS BOOKING
+          (
+            request.auth.uid == passengerId
+            && activeRole("PASSENGER")
+            && get(bookingPath(resource.data.bookingId)).data.status == "PENDING"
+            && get(bookingPath(resource.data.bookingId)).data.driverId == ""
+            && getAfter(bookingPath(resource.data.bookingId)).data.status == "CANCELLED"
+          )
+
+          ||
+
+          // DRIVER COMPLETES BOOKING
+          (
+            isApprovedDriver()
+            && get(bookingPath(resource.data.bookingId)).data.status == "ACCEPTED"
+            && get(bookingPath(resource.data.bookingId)).data.driverId == request.auth.uid
+            && getAfter(bookingPath(resource.data.bookingId)).data.status == "COMPLETED"
+          )
+        );
+    }
+  }
+}

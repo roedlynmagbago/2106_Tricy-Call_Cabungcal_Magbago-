@@ -320,17 +320,18 @@
             android:orientation="horizontal"
             android:paddingHorizontal="12dp"
             android:paddingVertical="4dp">
-
             <EditText
-                android:id="@+id/etEmail"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@null"
-                android:inputType="textEmailAddress"
-                android:text="passenger@email.com"
-                android:textColor="#6B7280"
-                android:textSize="14sp" />
+                    android:id="@+id/etEmail"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:hint="youremail@email.com"
+                    android:inputType="textEmailAddress"
+                    android:singleLine="true"
+                    android:textColor="#1A1A1A"
+                    android:textColorHint="#6B7280"
+                    android:textSize="14sp" />
 
             <ImageView
                 android:layout_width="18dp"

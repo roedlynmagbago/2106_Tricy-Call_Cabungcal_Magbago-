@@ -1,8 +1,6 @@
 package com.example.nasugbutricycleapp
 
-import android.content.Intent
 import android.os.Bundle
-import android.text.InputType
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
@@ -24,13 +22,14 @@ class CreateAccountActivity : AppCompatActivity() {
         val etPassword = findViewById<EditText>(R.id.etPassword)
         val etConfirmPassword =
             findViewById<EditText>(R.id.etConfirmPassword)
+
         val cbTerms = findViewById<CheckBox>(R.id.cbTerms)
         val btnCreateAccount =
             findViewById<Button>(R.id.btnCreateAccount)
+
         val tvLogin = findViewById<TextView>(R.id.tvLogin)
         val btnBack = findViewById<ImageView>(R.id.btnBack)
 
-        // Return to Login screen
         tvLogin.setOnClickListener {
             finish()
         }
@@ -40,6 +39,7 @@ class CreateAccountActivity : AppCompatActivity() {
         }
 
         btnCreateAccount.setOnClickListener {
+
             val name = etFullName.text.toString().trim()
             val username = etUsername.text.toString().trim()
             val email = etEmail.text.toString().trim()
@@ -80,6 +80,7 @@ class CreateAccountActivity : AppCompatActivity() {
 
             AuthService.register(
                 name = name,
+                username = username,
                 email = email,
                 password = password,
                 confirmPassword = confirmPassword,
@@ -96,8 +97,6 @@ class CreateAccountActivity : AppCompatActivity() {
                     ).show()
 
                     if (success) {
-                        // Username is collected by the form,
-                        // but is not saved by the current AuthService.
                         finish()
                     }
                 }

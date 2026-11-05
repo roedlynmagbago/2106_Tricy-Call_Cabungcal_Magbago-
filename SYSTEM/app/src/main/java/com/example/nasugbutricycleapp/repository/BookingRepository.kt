@@ -366,29 +366,52 @@ object BookingRepository {
     fun listenToAvailableBookings(
         onResult: (List<AvailableBooking>, String) -> Unit
     ): ListenerRegistration? {
-
         val uid = FirebaseManager.auth.currentUser?.uid
         if (uid == null) {
             onResult(emptyList(), "Please log in first.")
             return null
         }
-        return FirebaseManager.db.collection("bookings")
-            .whereEqualTo("status", "PENDING")
-            .addSnapshotListener { snapshot, error ->
+        val db = FirebaseManager.db
+        val userRef = db.collection("users").document(uid)
+        userRef.get()
+            .addOnSuccessListener { driver ->
 
-                if (error != null) {
+                if (!driver.exists() ||
+                    driver.getString("role") != "DRIVER" ||
+                    driver.getString("status") != "ACTIVE" ||
+                    driver.getString("driverApplicationStatus") != "APPROVED"
+                ) {
                     onResult(
                         emptyList(),
-                        error.message ?: "Unable to load bookings."
+                        "Only approved drivers can view bookings."
                     )
-                    return@addSnapshotListener
+                    return@addOnSuccessListener
                 }
-                val bookings = snapshot?.documents?.mapNotNull {
-                    it.toObject(AvailableBooking::class.java)
-                } ?: emptyList()
 
-                onResult(bookings, "Bookings updated.")
+                db.collection("bookings")
+                    .whereEqualTo("status", "PENDING")
+                    .addSnapshotListener { snapshot, error ->
+                        if (error != null) {
+                            onResult(
+                                emptyList(),
+                                error.message ?: "Unable to load bookings."
+                            )
+                            return@addSnapshotListener
+                        }
+                        val bookings = snapshot?.documents?.mapNotNull {
+                            it.toObject(AvailableBooking::class.java)
+                        } ?: emptyList()
+
+                        onResult(bookings, "Bookings updated.")
+                    }
             }
+            .addOnFailureListener { error ->
+                onResult(
+                    emptyList(),
+                    error.message ?: "Unable to verify driver account."
+                )
+            }
+        return null
     }
 
     fun cancelBooking(

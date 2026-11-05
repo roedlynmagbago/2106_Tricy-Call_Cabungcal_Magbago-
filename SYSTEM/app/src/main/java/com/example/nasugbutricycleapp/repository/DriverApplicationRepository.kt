@@ -16,41 +16,91 @@ object DriverApplicationRepository {
                 onResult(documents.documents, null)
             }
             .addOnFailureListener { error ->
-                onResult(emptyList(), error.message)
+                onResult(
+                    emptyList(),
+                    error.localizedMessage ?: "Unable to load applications."
+                )
             }
     }
+
     // Approve driver application
     fun approveDriver(
         userId: String,
         onResult: (Boolean, String) -> Unit
     ) {
-        val updates = mapOf(
-            "role" to "DRIVER",
-            "driverApplicationStatus" to "APPROVED"
-        )
-        FirebaseManager.db.collection("users")
+        val userRef = FirebaseManager.db.collection("users")
             .document(userId)
-            .update(updates)
-            .addOnSuccessListener {
-                onResult(true, "Driver approved successfully.")
+
+        userRef.get()
+            .addOnSuccessListener { document ->
+                if (!document.exists()) {
+                    onResult(false, "User application not found.")
+                    return@addOnSuccessListener
+                }
+                if (document.getString("driverApplicationStatus") != "PENDING") {
+                    onResult(false, "Application is no longer pending.")
+                    return@addOnSuccessListener
+                }
+                val updates = mapOf(
+                    "role" to "DRIVER",
+                    "driverApplicationStatus" to "APPROVED"
+                )
+                userRef.update(updates)
+                    .addOnSuccessListener {
+                        onResult(true, "Driver approved successfully.")
+                    }
+                    .addOnFailureListener { error ->
+                        onResult(
+                            false,
+                            error.localizedMessage ?: "Approval failed."
+                        )
+                    }
             }
             .addOnFailureListener { error ->
-                onResult(false, error.message ?: "Approval failed.")
+                onResult(
+                    false,
+                    error.localizedMessage ?: "Unable to check application."
+                )
             }
     }
+
     // Reject driver application
     fun rejectDriver(
         userId: String,
         onResult: (Boolean, String) -> Unit
     ) {
-        FirebaseManager.db.collection("users")
+        val userRef = FirebaseManager.db.collection("users")
             .document(userId)
-            .update("driverApplicationStatus", "REJECTED")
-            .addOnSuccessListener {
-                onResult(true, "Driver application rejected.")
+
+        userRef.get()
+            .addOnSuccessListener { document ->
+                if (!document.exists()) {
+                    onResult(false, "User application not found.")
+                    return@addOnSuccessListener
+                }
+                if (document.getString("driverApplicationStatus") != "PENDING") {
+                    onResult(false, "Application is no longer pending.")
+                    return@addOnSuccessListener
+                }
+                userRef.update(
+                    "driverApplicationStatus",
+                    "REJECTED"
+                )
+                    .addOnSuccessListener {
+                        onResult(true, "Driver application rejected.")
+                    }
+                    .addOnFailureListener { error ->
+                        onResult(
+                            false,
+                            error.localizedMessage ?: "Rejection failed."
+                        )
+                    }
             }
             .addOnFailureListener { error ->
-                onResult(false, error.message ?: "Rejection failed.")
+                onResult(
+                    false,
+                    error.localizedMessage ?: "Unable to check application."
+                )
             }
     }
 }

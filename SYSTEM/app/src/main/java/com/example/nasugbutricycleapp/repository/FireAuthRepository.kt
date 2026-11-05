@@ -1,23 +1,30 @@
 package com.example.nasugbutricycleapp.repository
+
+import android.util.Patterns
 import com.example.nasugbutricycleapp.firebase.FirebaseManager
 
 object FirebaseAuthRepository {
 
     fun register(
         name: String,
+        username: String,
         email: String,
         password: String,
         confirmPassword: String,
         applyAsDriver: Boolean,
         onResult: (Boolean, String) -> Unit
     ) {
-        if (name.isBlank() || email.isBlank() || password.isBlank()) {
+        if (
+            name.isBlank() ||
+            username.isBlank() ||
+            email.isBlank() ||
+            password.isBlank()
+        ) {
             onResult(false, "Please fill in all required fields.")
             return
         }
 
-        if (!android.util.Patterns.EMAIL_ADDRESS
-                .matcher(email.trim()).matches()) {
+        if (!Patterns.EMAIL_ADDRESS.matcher(email.trim()).matches()) {
             onResult(false, "Please enter a valid email address.")
             return
         }
@@ -38,6 +45,7 @@ object FirebaseAuthRepository {
                 val uid = result.user?.uid
 
                 if (uid == null) {
+                    FirebaseManager.auth.signOut()
                     onResult(false, "Unable to get user ID.")
                     return@addOnSuccessListener
                 }
@@ -45,14 +53,17 @@ object FirebaseAuthRepository {
                 FirestoreUserRepository.saveUser(
                     userId = uid,
                     name = name,
+                    username = username,
                     email = email.trim(),
                     applyAsDriver = applyAsDriver
                 ) { success ->
+
                     if (success) {
                         onResult(true, "Registration successful.")
                     } else {
                         result.user?.delete()
                             ?.addOnCompleteListener { task ->
+
                                 FirebaseManager.auth.signOut()
 
                                 if (task.isSuccessful) {
@@ -71,6 +82,13 @@ object FirebaseAuthRepository {
                 }
             }
             .addOnFailureListener { error ->
+
+                android.util.Log.e(
+                    "AUTH_REGISTER",
+                    "Registration failed",
+                    error
+                )
+
                 onResult(
                     false,
                     error.localizedMessage ?: "Registration failed."
@@ -87,6 +105,7 @@ object FirebaseAuthRepository {
             onResult(false, "Please enter your email and password.")
             return
         }
+
         FirebaseManager.auth
             .signInWithEmailAndPassword(email.trim(), password)
             .addOnSuccessListener { result ->
@@ -97,10 +116,12 @@ object FirebaseAuthRepository {
                     onResult(false, "Unable to get user ID.")
                     return@addOnSuccessListener
                 }
+
                 FirebaseManager.db.collection("users")
                     .document(uid)
                     .get()
                     .addOnSuccessListener { document ->
+
                         if (!document.exists()) {
                             FirebaseManager.auth.signOut()
                             onResult(false, "User profile not found.")
@@ -117,9 +138,11 @@ object FirebaseAuthRepository {
                             onResult(false, "Account is not active.")
                             return@addOnSuccessListener
                         }
+
                         when (role) {
-                            "SUPER_ADMIN", "ADMIN", "PASSENGER" ->
+                            "SUPER_ADMIN", "ADMIN", "PASSENGER" -> {
                                 onResult(true, role)
+                            }
 
                             "DRIVER" -> {
                                 if (driverStatus == "APPROVED") {
@@ -129,6 +152,7 @@ object FirebaseAuthRepository {
                                     onResult(false, "Driver is not approved.")
                                 }
                             }
+
                             else -> {
                                 FirebaseManager.auth.signOut()
                                 onResult(false, "Invalid user role.")
@@ -153,6 +177,7 @@ object FirebaseAuthRepository {
             onResult(false, "Please enter your email address.")
             return
         }
+
         FirebaseManager.auth
             .sendPasswordResetEmail(email.trim())
             .addOnSuccessListener {
@@ -162,6 +187,7 @@ object FirebaseAuthRepository {
                 onResult(false, "Unable to send reset email.")
             }
     }
+
     fun logout() {
         FirebaseManager.auth.signOut()
     }

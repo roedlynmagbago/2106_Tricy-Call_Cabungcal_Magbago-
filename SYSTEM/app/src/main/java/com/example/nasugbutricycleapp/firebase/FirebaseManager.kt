@@ -8,6 +8,15 @@ object FirebaseManager {
     val db = FirebaseFirestore.getInstance()
 
     fun connectToFirestoreEmulator() {
-        db.useEmulator("10.0.2.2", 8080)
+        db.useEmulator("192.168.1.25", 8080)
+    }
+
+    fun connectToAuthEmulator() {
+        auth.useEmulator("192.168.1.25", 9099)
+    }
+
+    fun connectToEmulators() {
+        connectToAuthEmulator()
+        connectToFirestoreEmulator()
     }
 }
