@@ -100,40 +100,7 @@
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <Space android:layout_width="match_parent" android:layout_height="24dp" />
-
-        <!-- ================= TABS ================= -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_tab_container"
-            android:orientation="horizontal"
-            android:padding="4dp">
-
-            <!-- ACTIVE TAB -->
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_weight="1"
-                android:background="@drawable/bg_tab_active"
-                android:gravity="center"
-                android:text="Create Account"
-                android:textColor="#0A5C53"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-
-            <!-- INACTIVE TAB -->
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="Log In"
-                android:textColor="#6B7280"
-                android:textSize="14sp" />
-        </LinearLayout>
-
-        <Space android:layout_width="match_parent" android:layout_height="24dp" />
+        <Space android:layout_width="match_parent" android:layout_height="32dp" />
 
         <!-- ================= WELCOME SECTION ================= -->
         <LinearLayout
@@ -200,7 +167,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="6dp"
                 android:layout_weight="1"
-                android:background="@drawable/bg_card_active"
+                android:background="@drawable/bg_role_selected"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:padding="12dp">
@@ -210,7 +177,8 @@
                     android:layout_height="32dp"
                     android:background="#FFFFFF"
                     android:padding="6dp"
-                    android:src="@drawable/ic_commuter_icon" />
+                    android:src="@drawable/ic_commuter_icon"
+                    app:tint="#0F172A" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -222,7 +190,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Passenger"
-                        android:textColor="#1A1A1A"
+                        android:textColor="#0F172A"
                         android:textSize="13sp"
                         android:textStyle="bold" />
 
@@ -230,7 +198,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Commuter"
-                        android:textColor="#6B7280"
+                        android:textColor="#0F172A"
                         android:textSize="11sp" />
                 </LinearLayout>
             </LinearLayout>
@@ -241,7 +209,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="6dp"
                 android:layout_weight="1"
-                android:background="@drawable/bg_card_inactive"
+                android:background="@drawable/bg_role_unselected"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:padding="12dp">
@@ -251,7 +219,8 @@
                     android:layout_height="32dp"
                     android:background="#F5F7FA"
                     android:padding="6dp"
-                    android:src="@drawable/ic_tricycle" />
+                    android:src="@drawable/ic_tricycle"
+                    app:tint="#64748B" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
