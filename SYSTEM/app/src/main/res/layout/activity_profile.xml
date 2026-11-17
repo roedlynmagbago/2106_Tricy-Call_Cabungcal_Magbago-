@@ -1,927 +1,858 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F7FA">
+    android:background="#F4F7F6"
+    android:fitsSystemWindows="true">
 
-    <!-- TOP APP BAR -->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/top_header"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#0F172A"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="12dp"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <ImageView
-            android:id="@+id/iv_logo"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:background="@drawable/bg_circle_teal"
-            android:scaleType="centerInside"
-            android:src="@android:drawable/ic_menu_directions"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="#0F172A" />
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/iv_logo"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="NASUGBU DISPATCH"
-                android:textColor="#94A3B8"
-                android:textSize="9sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Driver Dash"
-                android:textColor="#FFFFFF"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="28dp"
-                android:background="@drawable/bg_rounded_light_blue"
-                android:gravity="center"
-                android:paddingHorizontal="10dp"
-                android:text="★ Pro"
-                android:textColor="#2DD4BF"
-                android:textSize="10sp"
-                android:textStyle="bold" />
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginStart="16dp"
-                android:src="@android:drawable/ic_popup_reminder"
-                app:tint="#FFFFFF" />
-
-            <ImageView
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:layout_marginStart="16dp"
-                android:background="@drawable/bg_avatar_circle"
-                android:scaleType="centerInside"
-                android:src="@android:drawable/ic_menu_myplaces"
-                app:tint="#FFFFFF" />
-        </LinearLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <!-- SCROLLABLE CONTENT -->
+    <!-- Scrollable Content -->
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScrollView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:paddingBottom="80dp"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        android:scrollbars="none"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_nav"
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:paddingBottom="24dp">
 
-            <!-- PROFILE CARD -->
-            <androidx.cardview.widget.CardView
+            <!-- Top Dark Header Section (ADDED SPACE/PADDING) -->
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardBackgroundColor="#1E293B"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="4dp">
+                android:background="#0F172A"
+                android:paddingTop="32dp"
+                android:paddingBottom="32dp">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <!-- Screen Title (Adjusted Margin) -->
+                <TextView
+                    android:id="@+id/tv_screen_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:text="Passenger Profile &amp; Trips"
+                    android:textColor="#94A3B8"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <!-- Top Navigation Bar (Adjusted Margin for breathing room) -->
+                <LinearLayout
+                    android:id="@+id/ll_top_nav"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="16dp">
+                    android:layout_below="@+id/tv_screen_title"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="20dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
+                    <!-- Logo -->
                     <ImageView
-                        android:id="@+id/iv_profile_avatar"
-                        android:layout_width="64dp"
-                        android:layout_height="64dp"
-                        android:background="@drawable/bg_avatar_circle"
-                        android:padding="12dp"
-                        android:src="@android:drawable/ic_menu_myplaces"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:tint="#FFFFFF" />
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/bg_circle_white"
+                        android:padding="10dp"
+                        android:src="@drawable/ic_bus"
+                        app:tint="#00D2D3" />
 
-                    <TextView
-                        android:id="@+id/tv_name"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:text="Maria Ciara Santos"
-                        android:textColor="#FFFFFF"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/iv_profile_avatar"
-                        app:layout_constraintTop_toTopOf="@id/iv_profile_avatar" />
-
-                    <TextView
-                        android:id="@+id/tv_verified"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:text="● Verified Local Resident"
-                        android:textColor="#2DD4BF"
-                        android:textSize="10sp"
-                        android:textStyle="bold"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="@id/tv_name"
-                        app:layout_constraintTop_toBottomOf="@id/tv_name" />
-
-                    <TextView
-                        android:id="@+id/tv_contact"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="🇵🇭 +63 917 842 5901 · maria.santos@example.com"
-                        android:textColor="#94A3B8"
-                        android:textSize="10sp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="@id/tv_name"
-                        app:layout_constraintTop_toBottomOf="@id/tv_verified" />
-
-                    <TextView
-                        android:id="@+id/tv_member"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:text="Member since Aug 2023 · Poblacion Zone 1"
-                        android:textColor="#94A3B8"
-                        android:textSize="10sp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="@id/tv_name"
-                        app:layout_constraintTop_toBottomOf="@id/tv_contact" />
-
-                    <!-- Stats Row -->
+                    <!-- Header Text -->
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:background="#0F172A"
-                        android:orientation="horizontal"
-                        android:padding="12dp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/iv_profile_avatar">
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
 
-                        <LinearLayout
-                            android:layout_width="0dp"
+                        <TextView
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:orientation="vertical">
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="38"
-                                android:textColor="#2DD4BF"
-                                android:textSize="18sp"
-                                android:textStyle="bold" />
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="TOTAL RIDES"
-                                android:textColor="#94A3B8"
-                                android:textSize="8sp" />
-                        </LinearLayout>
+                            android:letterSpacing="0.1"
+                            android:text="NASUGBU DISPATCH"
+                            android:textColor="#94A3B8"
+                            android:textSize="9sp"
+                            android:textStyle="bold" />
 
-                        <View
-                            android:layout_width="1dp"
-                            android:layout_height="match_parent"
-                            android:background="#334155" />
-
-                        <LinearLayout
-                            android:layout_width="0dp"
+                        <TextView
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:orientation="vertical">
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="₱340"
-                                android:textColor="#2DD4BF"
-                                android:textSize="18sp"
-                                android:textStyle="bold" />
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="FARE SAVED"
-                                android:textColor="#94A3B8"
-                                android:textSize="8sp" />
-                        </LinearLayout>
-
-                        <View
-                            android:layout_width="1dp"
-                            android:layout_height="match_parent"
-                            android:background="#334155" />
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:orientation="vertical">
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="4.95 ★"
-                                android:textColor="#F59E0B"
-                                android:textSize="18sp"
-                                android:textStyle="bold" />
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="PASSENGER RATING"
-                                android:textColor="#94A3B8"
-                                android:textSize="8sp" />
-                        </LinearLayout>
+                            android:text="Driver Dashboard"
+                            android:textColor="#FFFFFF"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
                     </LinearLayout>
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </androidx.cardview.widget.CardView>
 
-            <!-- ACTION TABS -->
+                    <!-- Rate Button -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_chip_outline_white"
+                        android:drawablePadding="4dp"
+                        android:paddingHorizontal="12dp"
+                        android:paddingVertical="6dp"
+                        android:text="4.8 ★"
+                        android:textColor="#FFFFFF"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <!-- Notification Icon -->
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginStart="16dp"
+                        android:src="@drawable/ic_notifications"
+                        app:tint="#FFFFFF" />
+
+                    <!-- Profile Icon -->
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginStart="16dp"
+                        android:background="@drawable/bg_circle_gray"
+                        android:src="@drawable/ic_person"
+                        app:tint="#FFFFFF" />
+                </LinearLayout>
+
+                <!-- Profile Card (Adjusted Margin) -->
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/ll_top_nav"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="28dp"
+                    app:cardBackgroundColor="#1E293B"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="10dp">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="16dp">
+
+                        <!-- Avatar -->
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/cv_avatar"
+                            android:layout_width="68dp"
+                            android:layout_height="68dp"
+                            app:cardCornerRadius="34dp"
+                            app:cardElevation="0dp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+                            <ImageView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:scaleType="centerCrop"
+                                android:src="@drawable/ic_person" />
+                        </androidx.cardview.widget.CardView>
+
+                        <ImageView
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:layout_marginStart="2dp"
+                            android:layout_marginBottom="2dp"
+                            android:background="@drawable/bg_circle_white"
+                            android:padding="2dp"
+                            android:src="@drawable/ic_verified_green"
+                            app:layout_constraintBottom_toBottomOf="@+id/cv_avatar"
+                            app:layout_constraintStart_toStartOf="@+id/cv_avatar"
+                            app:tint="#00D2D3" />
+
+                        <!-- User Info -->
+                        <TextView
+                            android:id="@+id/tv_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:text="Maria Clara Santos"
+                            android:textColor="#FFFFFF"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            app:layout_constraintStart_toEndOf="@+id/cv_avatar"
+                            app:layout_constraintTop_toTopOf="@+id/cv_avatar" />
+
+                        <TextView
+                            android:id="@+id/tv_verified"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:layout_marginTop="2dp"
+                            android:text="Verified Student (20% LGU Discount)"
+                            android:textColor="#00D2D3"
+                            android:textSize="10sp"
+                            app:layout_constraintStart_toEndOf="@+id/cv_avatar"
+                            app:layout_constraintTop_toBottomOf="@+id/tv_name" />
+
+                        <TextView
+                            android:id="@+id/tv_contact"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:layout_marginTop="4dp"
+                            android:text="+63 977 842 1042 • maria.santos@email.com"
+                            android:textColor="#94A3B8"
+                            android:textSize="10sp"
+                            app:layout_constraintStart_toEndOf="@+id/cv_avatar"
+                            app:layout_constraintTop_toBottomOf="@+id/tv_verified" />
+
+                        <TextView
+                            android:id="@+id/tv_member"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:layout_marginTop="4dp"
+                            android:text="Member since Aug 2024 • Poblacion Zone 1"
+                            android:textColor="#94A3B8"
+                            android:textSize="10sp"
+                            app:layout_constraintStart_toEndOf="@+id/cv_avatar"
+                            app:layout_constraintTop_toBottomOf="@+id/tv_contact" />
+
+                        <!-- Divider -->
+                        <View
+                            android:id="@+id/divider"
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginTop="16dp"
+                            android:background="#334155"
+                            app:layout_constraintTop_toBottomOf="@+id/cv_avatar" />
+
+                        <!-- Stats Row -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:orientation="horizontal"
+                            android:weightSum="3"
+                            app:layout_constraintTop_toBottomOf="@+id/divider">
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:orientation="vertical">
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="38"
+                                    android:textColor="#00D2D3"
+                                    android:textSize="18sp"
+                                    android:textStyle="bold" />
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="TOTAL RIDES"
+                                    android:textColor="#94A3B8"
+                                    android:textSize="9sp" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:orientation="vertical">
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="₱340"
+                                    android:textColor="#00D2D3"
+                                    android:textSize="18sp"
+                                    android:textStyle="bold" />
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="FARE SAVED"
+                                    android:textColor="#94A3B8"
+                                    android:textSize="9sp" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:orientation="vertical">
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="4.95 ★"
+                                    android:textColor="#00D2D3"
+                                    android:textSize="18sp"
+                                    android:textStyle="bold" />
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center"
+                                    android:text="PASSENGER RATING"
+                                    android:textColor="#94A3B8"
+                                    android:textSize="9sp" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.cardview.widget.CardView>
+            </RelativeLayout>
+
+            <!-- Tabs -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="24dp"
                 android:orientation="horizontal"
                 android:weightSum="3">
 
-                <LinearLayout
+                <TextView
                     android:layout_width="0dp"
-                    android:layout_height="56dp"
-                    android:layout_marginEnd="4dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:background="@drawable/bg_tab_active"
+                    android:drawablePadding="6dp"
                     android:gravity="center"
-                    android:orientation="vertical"
-                    android:elevation="2dp">
-                    <ImageView
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
-                        android:src="@android:drawable/ic_menu_agenda"
-                        app:tint="#0F172A" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="Trips"
-                        android:textColor="#0F172A"
-                        android:textSize="10sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
+                    android:paddingVertical="10dp"
+                    android:text="Trips"
+                    android:textColor="#00D2D3"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    app:drawableStartCompat="@drawable/ic_route" />
 
-                <LinearLayout
+                <TextView
                     android:layout_width="0dp"
-                    android:layout_height="56dp"
-                    android:layout_marginHorizontal="4dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
                     android:layout_weight="1"
                     android:background="@drawable/bg_tab_inactive"
+                    android:drawablePadding="6dp"
                     android:gravity="center"
-                    android:orientation="vertical">
-                    <ImageView
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
-                        android:src="@android:drawable/ic_menu_myplaces"
-                        app:tint="#64748B" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="Saved Stations"
-                        android:textColor="#64748B"
-                        android:textSize="10sp" />
-                </LinearLayout>
+                    android:paddingVertical="10dp"
+                    android:text="Saved Stations"
+                    android:textColor="#64748B"
+                    android:textSize="11sp"
+                    app:drawableStartCompat="@drawable/ic_bookmark" />
 
-                <LinearLayout
+                <TextView
                     android:layout_width="0dp"
-                    android:layout_height="56dp"
-                    android:layout_marginStart="4dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
                     android:layout_weight="1"
                     android:background="@drawable/bg_tab_inactive"
+                    android:drawablePadding="6dp"
                     android:gravity="center"
-                    android:orientation="vertical">
-                    <ImageView
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
-                        android:src="@android:drawable/ic_lock_lock"
-                        app:tint="#64748B" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="Account &amp; Safety"
-                        android:textColor="#64748B"
-                        android:textSize="10sp" />
-                </LinearLayout>
+                    android:paddingVertical="10dp"
+                    android:text="Account &amp; Safety"
+                    android:textColor="#64748B"
+                    android:textSize="11sp"
+                    app:drawableStartCompat="@drawable/ic_shield" />
             </LinearLayout>
 
-            <!-- FILTER CHIPS -->
+            <!-- Filter Chips -->
             <HorizontalScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:clipToPadding="false"
+                android:paddingHorizontal="16dp"
                 android:scrollbars="none">
 
-                <com.google.android.material.chip.ChipGroup
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:singleLine="true">
+                    android:orientation="horizontal">
 
-                    <com.google.android.material.chip.Chip
+                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="All Trips (38)"
+                        android:background="@drawable/bg_chip_dark"
+                        android:paddingHorizontal="14dp"
+                        android:paddingVertical="8dp"
+                        android:text="ALL TRIPS (30)"
                         android:textColor="#FFFFFF"
-                        app:chipBackgroundColor="#0F172A"
-                        app:chipIcon="@android:drawable/ic_menu_sort_by_size"
-                        app:chipIconTint="#FFFFFF" />
+                        android:textSize="10sp"
+                        android:textStyle="bold" />
 
-                    <com.google.android.material.chip.Chip
+                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Poblacion Loop"
-                        android:textColor="#0F172A"
-                        app:chipBackgroundColor="#FFFFFF"
-                        app:chipStrokeColor="#E2E8F0"
-                        app:chipStrokeWidth="1dp" />
-
-                    <com.google.android.material.chip.Chip
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Coastal / Wawa"
-                        android:textColor="#0F172A"
-                        app:chipBackgroundColor="#FFFFFF"
-                        app:chipStrokeColor="#E2E8F0"
-                        app:chipStrokeWidth="1dp" />
-
-                    <com.google.android.material.chip.Chip
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Split"
-                        android:textColor="#0F172A"
-                        app:chipBackgroundColor="#FFFFFF"
-                        app:chipStrokeColor="#E2E8F0"
-                        app:chipStrokeWidth="1dp" />
-                </com.google.android.material.chip.ChipGroup>
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/bg_chip_light"
+                        android:paddingHorizontal="14dp"
+                        android:paddingVertical="8dp"
+                        android:text="Poolation Loop"
+                        android:textColor="#64748B"
+                        android:textSize="10sp" />
+                </LinearLayout>
             </HorizontalScrollView>
 
-            <!-- ================= TRIP CARD 1 ================= -->
+            <!-- TRIP CARD 1 -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="16dp"
                 app:cardBackgroundColor="#FFFFFF"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="2dp"
-                app:strokeColor="#E2E8F0"
-                app:strokeWidth="1dp">
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:orientation="vertical"
                     android:padding="16dp">
 
-                    <ImageView
-                        android:id="@+id/iv_time1"
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
-                        android:src="@android:drawable/ic_menu_recent_history"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:tint="#2DD4BF" />
-
-                    <TextView
-                        android:id="@+id/tv_date1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:text="Yesterday, 4:15 PM\nStandard Municipal Dispatch"
-                        android:textColor="#64748B"
-                        android:textSize="10sp"
-                        app:layout_constraintEnd_toStartOf="@id/tv_price1"
-                        app:layout_constraintStart_toEndOf="@id/iv_time1"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:id="@+id/tv_price1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="₱45.00"
-                        android:textColor="#0F172A"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
+                    <!-- Date & Price -->
                     <LinearLayout
-                        android:id="@+id/route_box1"
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:background="#F8FAFC"
-                        android:orientation="vertical"
-                        android:padding="12dp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/iv_time1">
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:src="@drawable/ic_check_circle"
+                            app:tint="#00D2D3" />
 
                         <LinearLayout
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal">
-                            <View
-                                android:layout_width="8dp"
-                                android:layout_height="8dp"
-                                android:layout_marginTop="4dp"
-                                android:background="@drawable/bg_circle_teal" />
+                            android:layout_marginStart="10dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="10dp"
-                                android:text="SAKAYAN (PICKUP):\nNasugbu Central Plaza"
+                                android:text="Yesterday, 4:15 PM"
+                                android:textColor="#1E293B"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Standard Municipal Dispatch"
                                 android:textColor="#64748B"
                                 android:textSize="10sp" />
                         </LinearLayout>
 
-                        <View
-                            android:layout_width="1.5dp"
-                            android:layout_height="12dp"
-                            android:layout_marginStart="3.25dp"
-                            android:background="#CBD5E1" />
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
+                        <TextView
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal">
-                            <View
-                                android:layout_width="8dp"
-                                android:layout_height="8dp"
-                                android:layout_marginTop="4dp"
-                                android:background="@drawable/bg_circle_dark" />
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="10dp"
-                                android:text="BABAAN (DROP-OFF):\nBrgy. Bucana Elementary"
-                                android:textColor="#64748B"
-                                android:textSize="10sp" />
-                        </LinearLayout>
+                            android:text="₱45.00"
+                            android:textColor="#0F172A"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
                     </LinearLayout>
 
-                    <ImageView
-                        android:id="@+id/iv_driver1"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_marginTop="12dp"
-                        android:background="@drawable/bg_avatar_circle"
-                        android:padding="4dp"
-                        android:src="@android:drawable/ic_menu_myplaces"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/route_box1"
-                        app:tint="#FFFFFF" />
-
-                    <TextView
-                        android:id="@+id/tv_driver_name1"
-                        android:layout_width="0dp"
+                    <!-- Route Details Box -->
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:text="Mang Danilo H. · TODA #008"
-                        android:textColor="#0F172A"
-                        android:textSize="12sp"
-                        app:layout_constraintBottom_toBottomOf="@id/iv_driver1"
-                        app:layout_constraintEnd_toStartOf="@id/tv_rating1"
-                        app:layout_constraintStart_toEndOf="@id/iv_driver1"
-                        app:layout_constraintTop_toTopOf="@id/iv_driver1" />
+                        android:layout_marginTop="16dp"
+                        android:background="@drawable/bg_route_box"
+                        android:padding="12dp">
 
-                    <TextView
-                        android:id="@+id/tv_rating1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="★ 5.0"
-                        android:textColor="#F59E0B"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        app:layout_constraintBottom_toBottomOf="@id/iv_driver1"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="@id/iv_driver1" />
+                        <ImageView
+                            android:id="@+id/iv_pickup_dot_1"
+                            android:layout_width="12dp"
+                            android:layout_height="12dp"
+                            android:src="@drawable/ic_circle_teal"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
 
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:orientation="horizontal"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/iv_driver1">
+                        <TextView
+                            android:id="@+id/tv_pickup_label_1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:text="SAKAYAN (PICKUP)"
+                            android:textColor="#00D2D3"
+                            android:textSize="8sp"
+                            android:textStyle="bold"
+                            app:layout_constraintStart_toEndOf="@+id/iv_pickup_dot_1"
+                            app:layout_constraintTop_toTopOf="parent" />
 
-                        <com.google.android.material.button.MaterialButton
+                        <TextView
+                            android:id="@+id/tv_pickup_loc_1"
                             android:layout_width="0dp"
-                            android:layout_height="40dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginTop="2dp"
+                            android:text="Nasugbu Central Plaza Sakayan"
+                            android:textColor="#1E293B"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/iv_pickup_dot_1"
+                            app:layout_constraintTop_toBottomOf="@+id/tv_pickup_label_1" />
+
+                        <View
+                            android:id="@+id/view_line_1"
+                            android:layout_width="2dp"
+                            android:layout_height="20dp"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginTop="2dp"
+                            android:background="@drawable/dashed_line_vertical"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/iv_pickup_dot_1" />
+
+                        <ImageView
+                            android:id="@+id/iv_dropoff_dot_1"
+                            android:layout_width="12dp"
+                            android:layout_height="12dp"
+                            android:layout_marginTop="2dp"
+                            android:src="@drawable/ic_circle_dark"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/view_line_1" />
+
+                        <TextView
+                            android:id="@+id/tv_dropoff_label_1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:text="BABAAN (DROPOFF)"
+                            android:textColor="#64748B"
+                            android:textSize="8sp"
+                            android:textStyle="bold"
+                            app:layout_constraintStart_toEndOf="@+id/iv_dropoff_dot_1"
+                            app:layout_constraintTop_toTopOf="@+id/iv_dropoff_dot_1" />
+
+                        <TextView
+                            android:id="@+id/tv_dropoff_loc_1"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginTop="2dp"
+                            android:text="Brgy. Bucana Elementary School"
+                            android:textColor="#1E293B"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/iv_dropoff_dot_1"
+                            app:layout_constraintTop_toBottomOf="@+id/tv_dropoff_label_1" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <!-- Driver Info -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:background="@drawable/bg_circle_gray"
+                            android:src="@drawable/ic_person" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
                             android:layout_weight="1"
-                            android:layout_marginEnd="8dp"
-                            android:backgroundTint="#CCFBF1"
+                            android:text="Mang Danilo H. • TODA #09"
+                            android:textColor="#1E293B"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+
+                        <ImageView
+                            android:layout_width="14dp"
+                            android:layout_height="14dp"
+                            android:src="@drawable/ic_star_filled"
+                            app:tint="#F59E0B" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:text="5.0"
+                            android:textColor="#1E293B"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <!-- Action Buttons -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:orientation="horizontal">
+
+                        <androidx.appcompat.widget.AppCompatButton
+                            android:layout_width="0dp"
+                            android:layout_height="44dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_button_primary"
+                            android:drawableStart="@drawable/ic_refresh"
+                            android:drawableTint="#FFFFFF"
+                            android:paddingHorizontal="12dp"
                             android:text="Re-book Route"
                             android:textAllCaps="false"
-                            android:textColor="#0F766E"
+                            android:textColor="#FFFFFF"
                             android:textSize="12sp"
-                            android:textStyle="bold"
-                            app:cornerRadius="20dp"
-                            app:icon="@android:drawable/ic_menu_revert"
-                            app:iconGravity="textStart"
-                            app:iconTint="#0F766E"
-                            app:strokeWidth="0dp" />
+                            android:textStyle="bold" />
 
-                        <com.google.android.material.button.MaterialButton
-                            android:layout_width="0dp"
-                            android:layout_height="40dp"
-                            android:layout_weight="1"
-                            android:backgroundTint="#F1F5F9"
+                        <androidx.appcompat.widget.AppCompatButton
+                            android:layout_width="wrap_content"
+                            android:layout_height="44dp"
+                            android:layout_marginStart="8dp"
+                            android:background="@drawable/bg_button_secondary"
+                            android:drawableStart="@drawable/ic_receipt"
+                            android:drawableTint="#64748B"
+                            android:paddingHorizontal="16dp"
                             android:text="e-Receipt"
                             android:textAllCaps="false"
-                            android:textColor="#0F172A"
+                            android:textColor="#1E293B"
                             android:textSize="12sp"
-                            app:cornerRadius="20dp"
-                            app:icon="@android:drawable/ic_menu_save"
-                            app:iconGravity="textStart"
-                            app:iconTint="#64748B"
-                            app:strokeWidth="0dp" />
+                            android:textStyle="bold" />
                     </LinearLayout>
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- ================= TRIP CARD 2 ================= -->
+            <!-- TRIP CARD 2 -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="12dp"
                 app:cardBackgroundColor="#FFFFFF"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="2dp"
-                app:strokeColor="#E2E8F0"
-                app:strokeWidth="1dp">
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:orientation="vertical"
                     android:padding="16dp">
 
-                    <ImageView
-                        android:id="@+id/iv_time2"
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
-                        android:src="@android:drawable/ic_menu_recent_history"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:tint="#2DD4BF" />
-
-                    <TextView
-                        android:id="@+id/tv_date2"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:text="Oct 24, 7:30 AM\nQR Ph Digital Payment"
-                        android:textColor="#64748B"
-                        android:textSize="10sp"
-                        app:layout_constraintEnd_toStartOf="@id/tv_price2"
-                        app:layout_constraintStart_toEndOf="@id/iv_time2"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:id="@+id/tv_price2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="₱40.00"
-                        android:textColor="#0F172A"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
                     <LinearLayout
-                        android:id="@+id/route_box2"
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:background="#F8FAFC"
-                        android:orientation="vertical"
-                        android:padding="12dp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/iv_time2">
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:src="@drawable/ic_check_circle"
+                            app:tint="#00D2D3" />
 
                         <LinearLayout
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal">
-                            <View
-                                android:layout_width="8dp"
-                                android:layout_height="8dp"
-                                android:layout_marginTop="4dp"
-                                android:background="@drawable/bg_circle_teal" />
+                            android:layout_marginStart="10dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="10dp"
-                                android:text="SAKAYAN (PICKUP):\nTerminal 1 Public Market"
+                                android:text="Oct 24, 7:30 AM"
+                                android:textColor="#1E293B"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Special Charter Route"
                                 android:textColor="#64748B"
                                 android:textSize="10sp" />
                         </LinearLayout>
 
-                        <View
-                            android:layout_width="1.5dp"
-                            android:layout_height="12dp"
-                            android:layout_marginStart="3.25dp"
-                            android:background="#CBD5E1" />
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
+                        <TextView
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal">
-                            <View
-                                android:layout_width="8dp"
-                                android:layout_height="8dp"
-                                android:layout_marginTop="4dp"
-                                android:background="@drawable/bg_circle_dark" />
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="10dp"
-                                android:text="BABAAN (DROP-OFF):\nNasugbu Doctors Hospital"
-                                android:textColor="#64748B"
-                                android:textSize="10sp" />
-                        </LinearLayout>
-                    </LinearLayout>
-
-                    <ImageView
-                        android:id="@+id/iv_driver2"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_marginTop="12dp"
-                        android:background="@drawable/bg_avatar_circle"
-                        android:padding="4dp"
-                        android:src="@android:drawable/ic_menu_myplaces"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/route_box2"
-                        app:tint="#FFFFFF" />
-
-                    <TextView
-                        android:id="@+id/tv_driver_name2"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:text="Kuya Aris M. · Trike #118"
-                        android:textColor="#0F172A"
-                        android:textSize="12sp"
-                        app:layout_constraintBottom_toBottomOf="@id/iv_driver2"
-                        app:layout_constraintEnd_toStartOf="@id/tv_rating2"
-                        app:layout_constraintStart_toEndOf="@id/iv_driver2"
-                        app:layout_constraintTop_toTopOf="@id/iv_driver2" />
-
-                    <TextView
-                        android:id="@+id/tv_rating2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="★ 4.8"
-                        android:textColor="#F59E0B"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        app:layout_constraintBottom_toBottomOf="@id/iv_driver2"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="@id/iv_driver2" />
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:orientation="horizontal"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/iv_driver2">
-
-                        <com.google.android.material.button.MaterialButton
-                            android:layout_width="0dp"
-                            android:layout_height="40dp"
-                            android:layout_weight="1"
-                            android:layout_marginEnd="8dp"
-                            android:backgroundTint="#CCFBF1"
-                            android:text="Re-book Route"
-                            android:textAllCaps="false"
-                            android:textColor="#0F766E"
-                            android:textSize="12sp"
-                            android:textStyle="bold"
-                            app:cornerRadius="20dp"
-                            app:icon="@android:drawable/ic_menu_revert"
-                            app:iconGravity="textStart"
-                            app:iconTint="#0F766E"
-                            app:strokeWidth="0dp" />
-
-                        <com.google.android.material.button.MaterialButton
-                            android:layout_width="0dp"
-                            android:layout_height="40dp"
-                            android:layout_weight="1"
-                            android:backgroundTint="#F1F5F9"
-                            android:text="e-Receipt"
-                            android:textAllCaps="false"
+                            android:text="₱55.00"
                             android:textColor="#0F172A"
-                            android:textSize="12sp"
-                            app:cornerRadius="20dp"
-                            app:icon="@android:drawable/ic_menu_save"
-                            app:iconGravity="textStart"
-                            app:iconTint="#64748B"
-                            app:strokeWidth="0dp" />
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
                     </LinearLayout>
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </androidx.cardview.widget.CardView>
-
-            <!-- ================= TRIP CARD 3 ================= -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                app:cardBackgroundColor="#FFFFFF"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="2dp"
-                app:strokeColor="#E2E8F0"
-                app:strokeWidth="1dp">
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="16dp">
-
-                    <ImageView
-                        android:id="@+id/iv_time3"
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
-                        android:src="@android:drawable/ic_menu_recent_history"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:tint="#2DD4BF" />
-
-                    <TextView
-                        android:id="@+id/tv_date3"
-                        android:layout_width="0dp"
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:text="Oct 12, 1:10 PM\nSpecial Charter Route"
-                        android:textColor="#64748B"
-                        android:textSize="10sp"
-                        app:layout_constraintEnd_toStartOf="@id/tv_price3"
-                        app:layout_constraintStart_toEndOf="@id/iv_time3"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:layout_marginTop="16dp"
+                        android:background="@drawable/bg_route_box"
+                        android:padding="12dp">
 
-                    <TextView
-                        android:id="@+id/tv_price3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="₱55.00"
-                        android:textColor="#0F172A"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        <ImageView
+                            android:id="@+id/iv_pickup_dot_2"
+                            android:layout_width="12dp"
+                            android:layout_height="12dp"
+                            android:src="@drawable/ic_circle_teal"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
 
-                    <LinearLayout
-                        android:id="@+id/route_box3"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:background="#F8FAFC"
-                        android:orientation="vertical"
-                        android:padding="12dp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/iv_time3">
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
+                        <TextView
+                            android:id="@+id/tv_pickup_label_2"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal">
-                            <View
-                                android:layout_width="8dp"
-                                android:layout_height="8dp"
-                                android:layout_marginTop="4dp"
-                                android:background="@drawable/bg_circle_teal" />
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="10dp"
-                                android:text="SAKAYAN (PICKUP):\nPlaza Miranda Terminal"
-                                android:textColor="#64748B"
-                                android:textSize="10sp" />
-                        </LinearLayout>
+                            android:layout_marginStart="10dp"
+                            android:text="SAKAYAN (PICKUP)"
+                            android:textColor="#00D2D3"
+                            android:textSize="8sp"
+                            android:textStyle="bold"
+                            app:layout_constraintStart_toEndOf="@+id/iv_pickup_dot_2"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/tv_pickup_loc_2"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginTop="2dp"
+                            android:text="Plaza Mirador Terminal"
+                            android:textColor="#1E293B"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/iv_pickup_dot_2"
+                            app:layout_constraintTop_toBottomOf="@+id/tv_pickup_label_2" />
 
                         <View
-                            android:layout_width="1.5dp"
+                            android:id="@+id/view_line_2"
+                            android:layout_width="2dp"
+                            android:layout_height="20dp"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginTop="2dp"
+                            android:background="@drawable/dashed_line_vertical"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/iv_pickup_dot_2" />
+
+                        <ImageView
+                            android:id="@+id/iv_dropoff_dot_2"
+                            android:layout_width="12dp"
                             android:layout_height="12dp"
-                            android:layout_marginStart="3.25dp"
-                            android:background="#CBD5E1" />
+                            android:layout_marginTop="2dp"
+                            android:src="@drawable/ic_circle_dark"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/view_line_2" />
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
+                        <TextView
+                            android:id="@+id/tv_dropoff_label_2"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal">
-                            <View
-                                android:layout_width="8dp"
-                                android:layout_height="8dp"
-                                android:layout_marginTop="4dp"
-                                android:background="@drawable/bg_circle_dark" />
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="10dp"
-                                android:text="BABAAN (DROP-OFF):\nBarangay Wawa Beachfront"
-                                android:textColor="#64748B"
-                                android:textSize="10sp" />
-                        </LinearLayout>
-                    </LinearLayout>
+                            android:layout_marginStart="10dp"
+                            android:text="BABAAN (DROPOFF)"
+                            android:textColor="#64748B"
+                            android:textSize="8sp"
+                            android:textStyle="bold"
+                            app:layout_constraintStart_toEndOf="@+id/iv_dropoff_dot_2"
+                            app:layout_constraintTop_toTopOf="@+id/iv_dropoff_dot_2" />
 
-                    <ImageView
-                        android:id="@+id/iv_driver3"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_marginTop="12dp"
-                        android:background="@drawable/bg_avatar_circle"
-                        android:padding="4dp"
-                        android:src="@android:drawable/ic_menu_myplaces"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/route_box3"
-                        app:tint="#FFFFFF" />
+                        <TextView
+                            android:id="@+id/tv_dropoff_loc_2"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginTop="2dp"
+                            android:text="Barangay Wawa Beachfront Zone"
+                            android:textColor="#1E293B"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/iv_dropoff_dot_2"
+                            app:layout_constraintTop_toBottomOf="@+id/tv_dropoff_label_2" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    <TextView
-                        android:id="@+id/tv_driver_name3"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:text="Mang Ramon V. · Trike #042"
-                        android:textColor="#0F172A"
-                        android:textSize="12sp"
-                        app:layout_constraintBottom_toBottomOf="@id/iv_driver3"
-                        app:layout_constraintEnd_toStartOf="@id/tv_rating3"
-                        app:layout_constraintStart_toEndOf="@id/iv_driver3"
-                        app:layout_constraintTop_toTopOf="@id/iv_driver3" />
-
-                    <TextView
-                        android:id="@+id/tv_rating3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="★ 4.9"
-                        android:textColor="#F59E0B"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        app:layout_constraintBottom_toBottomOf="@id/iv_driver3"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="@id/iv_driver3" />
-
-                    <!-- FIXED: Completed the Button layout -->
-                    <com.google.android.material.button.MaterialButton
-                        android:layout_width="0dp"
-                        android:layout_height="40dp"
-                        android:layout_marginTop="12dp"
-                        android:backgroundTint="#F1F5F9"
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:layout_width="match_parent"
+                        android:layout_height="44dp"
+                        android:layout_marginTop="16dp"
+                        android:background="@drawable/bg_button_secondary"
+                        android:drawableStart="@drawable/ic_refresh"
+                        android:drawableTint="#64748B"
+                        android:gravity="center"
                         android:text="Book Charter Again"
                         android:textAllCaps="false"
-                        android:textColor="#0F172A"
+                        android:textColor="#1E293B"
                         android:textSize="12sp"
-                        android:textStyle="bold"
-                        app:cornerRadius="20dp"
-                        app:icon="@android:drawable/ic_menu_compass"
-                        app:iconGravity="textStart"
-                        app:iconTint="#64748B"
-                        app:strokeWidth="0dp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Bottom Navigation -->
+    <LinearLayout
+        android:id="@+id/bottom_nav"
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:background="#FFFFFF"
+        android:elevation="12dp"
+        android:orientation="horizontal"
+        android:weightSum="3"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <!-- Inayos ang width pabalik sa 24dp para pantay -->
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_nav_home"
+                app:tint="#94A3B8" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Home"
+                android:textColor="#94A3B8"
+                android:textSize="10sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_nav_book"
+                app:tint="#94A3B8" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Book Ride"
+                android:textColor="#94A3B8"
+                android:textSize="10sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_nav_profile"
+                app:tint="#00D2D3" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Profile"
+                android:textColor="#00D2D3"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
