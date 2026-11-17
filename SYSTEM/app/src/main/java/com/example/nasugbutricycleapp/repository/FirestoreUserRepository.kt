@@ -4,6 +4,8 @@ import com.example.nasugbutricycleapp.firebase.FirebaseManager
 
 object FirestoreUserRepository {
 
+    private const val USERS_COLLECTION = "users"
+
     fun saveUser(
         userId: String,
         name: String,
@@ -15,12 +17,40 @@ object FirestoreUserRepository {
         address: String = "",
         onResult: (Boolean) -> Unit
     ) {
+        val cleanName = name.trim()
+        val cleanUsername = username.trim()
+        val cleanEmail = email.trim()
+        val cleanPhone = phoneNumber.trim()
+
+        // Validate required information
+        if (
+            userId.isBlank() ||
+            cleanName.isBlank() ||
+            cleanUsername.isBlank() ||
+            cleanEmail.isBlank()
+        ) {
+            onResult(false)
+            return
+        }
+
+        // Make sure the account matches the logged-in Firebase user
+        val currentUser = FirebaseManager.auth.currentUser
+
+        if (
+            currentUser == null ||
+            currentUser.uid != userId ||
+            !currentUser.email.equals(cleanEmail, ignoreCase = true)
+        ) {
+            onResult(false)
+            return
+        }
+
         val user = hashMapOf(
             "userId" to userId,
-            "name" to name.trim(),
-            "username" to username.trim(),
-            "email" to email.trim(),
-            "phoneNumber" to phoneNumber.trim(),
+            "name" to cleanName,
+            "username" to cleanUsername,
+            "email" to cleanEmail,
+            "phoneNumber" to cleanPhone,
             "role" to "PASSENGER",
             "status" to "ACTIVE",
             "driverApplicationStatus" to
@@ -29,9 +59,23 @@ object FirestoreUserRepository {
             "address" to address.trim()
         )
 
-        FirebaseManager.db.collection("users")
+        val userRef = FirebaseManager.db
+            .collection(USERS_COLLECTION)
             .document(userId)
-            .set(user)
+
+        // Prevent overwriting an existing user profile
+        FirebaseManager.db.runTransaction<Void?> { transaction ->
+
+            val existingUser = transaction.get(userRef)
+
+            if (existingUser.exists()) {
+                throw IllegalStateException("User profile already exists.")
+            }
+
+            transaction.set(userRef, user)
+
+            null
+        }
             .addOnSuccessListener {
                 onResult(true)
             }

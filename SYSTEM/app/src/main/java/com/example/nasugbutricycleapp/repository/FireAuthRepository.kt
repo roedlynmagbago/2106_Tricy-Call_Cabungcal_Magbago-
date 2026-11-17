@@ -1,10 +1,15 @@
 package com.example.nasugbutricycleapp.repository
 
+import android.util.Log
 import android.util.Patterns
 import com.example.nasugbutricycleapp.firebase.FirebaseManager
 
 object FirebaseAuthRepository {
 
+    private const val TAG = "FirebaseAuthRepository"
+    private const val USERS_COLLECTION = "users"
+
+    // REGISTER
     fun register(
         name: String,
         username: String,
@@ -14,17 +19,22 @@ object FirebaseAuthRepository {
         applyAsDriver: Boolean,
         onResult: (Boolean, String) -> Unit
     ) {
+        val cleanName = name.trim()
+        val cleanUsername = username.trim()
+        val cleanEmail = email.trim()
+
         if (
-            name.isBlank() ||
-            username.isBlank() ||
-            email.isBlank() ||
-            password.isBlank()
+            cleanName.isBlank() ||
+            cleanUsername.isBlank() ||
+            cleanEmail.isBlank() ||
+            password.isBlank() ||
+            confirmPassword.isBlank()
         ) {
             onResult(false, "Please fill in all required fields.")
             return
         }
 
-        if (!Patterns.EMAIL_ADDRESS.matcher(email.trim()).matches()) {
+        if (!Patterns.EMAIL_ADDRESS.matcher(cleanEmail).matches()) {
             onResult(false, "Please enter a valid email address.")
             return
         }
@@ -40,29 +50,34 @@ object FirebaseAuthRepository {
         }
 
         FirebaseManager.auth
-            .createUserWithEmailAndPassword(email.trim(), password)
+            .createUserWithEmailAndPassword(cleanEmail, password)
             .addOnSuccessListener { result ->
-                val uid = result.user?.uid
 
-                if (uid == null) {
+                val createdUser = result.user
+
+                if (createdUser == null) {
                     FirebaseManager.auth.signOut()
                     onResult(false, "Unable to get user ID.")
                     return@addOnSuccessListener
                 }
 
+                val uid = createdUser.uid
+
                 FirestoreUserRepository.saveUser(
                     userId = uid,
-                    name = name,
-                    username = username,
-                    email = email.trim(),
+                    name = cleanName,
+                    username = cleanUsername,
+                    email = cleanEmail,
                     applyAsDriver = applyAsDriver
                 ) { success ->
 
                     if (success) {
                         onResult(true, "Registration successful.")
                     } else {
-                        result.user?.delete()
-                            ?.addOnCompleteListener { task ->
+
+                        // Roll back Firebase Authentication account
+                        createdUser.delete()
+                            .addOnCompleteListener { task ->
 
                                 FirebaseManager.auth.signOut()
 
@@ -72,9 +87,15 @@ object FirebaseAuthRepository {
                                         "Registration failed. Please try again."
                                     )
                                 } else {
+                                    Log.e(
+                                        TAG,
+                                        "Unable to remove Auth account after profile creation failed.",
+                                        task.exception
+                                    )
+
                                     onResult(
                                         false,
-                                        "Profile was not saved. Please contact support."
+                                        "Profile was not saved and account cleanup failed. Please contact support."
                                     )
                                 }
                             }
@@ -83,11 +104,7 @@ object FirebaseAuthRepository {
             }
             .addOnFailureListener { error ->
 
-                android.util.Log.e(
-                    "AUTH_REGISTER",
-                    "Registration failed",
-                    error
-                )
+                Log.e(TAG, "Registration failed.", error)
 
                 onResult(
                     false,
@@ -96,19 +113,28 @@ object FirebaseAuthRepository {
             }
     }
 
+    // LOGIN
     fun login(
         email: String,
         password: String,
         onResult: (Boolean, String) -> Unit
     ) {
-        if (email.isBlank() || password.isBlank()) {
+        val cleanEmail = email.trim()
+
+        if (cleanEmail.isBlank() || password.isBlank()) {
             onResult(false, "Please enter your email and password.")
             return
         }
 
+        if (!Patterns.EMAIL_ADDRESS.matcher(cleanEmail).matches()) {
+            onResult(false, "Please enter a valid email address.")
+            return
+        }
+
         FirebaseManager.auth
-            .signInWithEmailAndPassword(email.trim(), password)
+            .signInWithEmailAndPassword(cleanEmail, password)
             .addOnSuccessListener { result ->
+
                 val uid = result.user?.uid
 
                 if (uid == null) {
@@ -117,7 +143,7 @@ object FirebaseAuthRepository {
                     return@addOnSuccessListener
                 }
 
-                FirebaseManager.db.collection("users")
+                FirebaseManager.db.collection(USERS_COLLECTION)
                     .document(uid)
                     .get()
                     .addOnSuccessListener { document ->
@@ -140,6 +166,7 @@ object FirebaseAuthRepository {
                         }
 
                         when (role) {
+
                             "SUPER_ADMIN", "ADMIN", "PASSENGER" -> {
                                 onResult(true, role)
                             }
@@ -149,7 +176,10 @@ object FirebaseAuthRepository {
                                     onResult(true, "DRIVER")
                                 } else {
                                     FirebaseManager.auth.signOut()
-                                    onResult(false, "Driver is not approved.")
+                                    onResult(
+                                        false,
+                                        "Driver is not approved."
+                                    )
                                 }
                             }
 
@@ -159,35 +189,59 @@ object FirebaseAuthRepository {
                             }
                         }
                     }
-                    .addOnFailureListener {
+                    .addOnFailureListener { error ->
+
+                        Log.e(TAG, "Unable to load user profile.", error)
+
                         FirebaseManager.auth.signOut()
                         onResult(false, "Unable to load user profile.")
                     }
             }
-            .addOnFailureListener {
-                onResult(false, "Invalid email or password.")
+            .addOnFailureListener { error ->
+
+                Log.e(TAG, "Login failed.", error)
+
+                onResult(
+                    false,
+                    error.localizedMessage ?: "Invalid email or password."
+                )
             }
     }
 
+    // RESET PASSWORD
     fun resetPassword(
         email: String,
         onResult: (Boolean, String) -> Unit
     ) {
-        if (email.isBlank()) {
+        val cleanEmail = email.trim()
+
+        if (cleanEmail.isBlank()) {
             onResult(false, "Please enter your email address.")
             return
         }
 
+        if (!Patterns.EMAIL_ADDRESS.matcher(cleanEmail).matches()) {
+            onResult(false, "Please enter a valid email address.")
+            return
+        }
+
         FirebaseManager.auth
-            .sendPasswordResetEmail(email.trim())
+            .sendPasswordResetEmail(cleanEmail)
             .addOnSuccessListener {
                 onResult(true, "Password reset email sent.")
             }
-            .addOnFailureListener {
-                onResult(false, "Unable to send reset email.")
+            .addOnFailureListener { error ->
+
+                Log.e(TAG, "Password reset failed.", error)
+
+                onResult(
+                    false,
+                    error.localizedMessage ?: "Unable to send reset email."
+                )
             }
     }
 
+    // LOGOUT
     fun logout() {
         FirebaseManager.auth.signOut()
     }

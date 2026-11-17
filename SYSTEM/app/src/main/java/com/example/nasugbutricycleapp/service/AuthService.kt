@@ -7,6 +7,7 @@ import com.example.nasugbutricycleapp.repository.UserRepository
 
 object AuthService {
 
+    // REGISTER
     fun register(
         name: String,
         username: String,
@@ -26,6 +27,8 @@ object AuthService {
             onResult = onResult
         )
     }
+
+    // LOGIN
     fun login(
         email: String,
         password: String,
@@ -37,14 +40,31 @@ object AuthService {
             onResult = onResult
         )
     }
+
+    // RESET PASSWORD
+    fun resetPassword(
+        email: String,
+        onResult: (Boolean, String) -> Unit
+    ) {
+        FirebaseAuthRepository.resetPassword(
+            email = email,
+            onResult = onResult
+        )
+    }
+
+    // LOGOUT
     fun logout() {
         FirebaseAuthRepository.logout()
     }
+
+    // GET CURRENT USER
     fun getCurrentUser(
         onResult: (User?, String?) -> Unit
     ) {
         UserRepository.getCurrentUser(onResult)
     }
+
+    // CHECK LOGIN STATUS
     fun isLoggedIn(): Boolean {
         return FirebaseManager.auth.currentUser != null
     }

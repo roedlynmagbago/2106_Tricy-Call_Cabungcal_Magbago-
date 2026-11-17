@@ -58,11 +58,45 @@ service cloud.firestore {
         && get(contactPath(bookingId)).data.passengerId == request.auth.uid;
     }
 
+    // CHECK IF PASSENGER HAS AN ACCEPTED BOOKING WITH DRIVER
+
+    function isPassengerAssignedToDriver(driverId) {
+      return activeRole("PASSENGER")
+        && exists(passengerActivePath(request.auth.uid))
+        && get(passengerActivePath(request.auth.uid)).data.passengerId == request.auth.uid
+        && get(passengerActivePath(request.auth.uid)).data.bookingId is string
+        && exists(bookingPath(
+          get(passengerActivePath(request.auth.uid)).data.bookingId
+        ))
+        && get(bookingPath(
+          get(passengerActivePath(request.auth.uid)).data.bookingId
+        )).data.status == "ACCEPTED"
+        && get(bookingPath(
+          get(passengerActivePath(request.auth.uid)).data.bookingId
+        )).data.driverId == driverId
+        && exists(contactPath(
+          get(passengerActivePath(request.auth.uid)).data.bookingId
+        ))
+        && get(contactPath(
+          get(passengerActivePath(request.auth.uid)).data.bookingId
+        )).data.passengerId == request.auth.uid;
+    }
+
+    // CHECK COMPLETED RIDE
+
+    function isCompletedRideForPassenger(bookingId, driverId) {
+      return signedIn()
+        && exists(bookingPath(bookingId))
+        && exists(contactPath(bookingId))
+        && get(contactPath(bookingId)).data.passengerId == request.auth.uid
+        && get(bookingPath(bookingId)).data.status == "COMPLETED"
+        && get(bookingPath(bookingId)).data.driverId == driverId;
+    }
+
     // USERS
 
     match /users/{userId} {
 
-      // CREATE USER PROFILE
       allow create: if signedIn()
         && request.auth.uid == userId
         && request.resource.data.keys().hasOnly([
@@ -102,16 +136,19 @@ service cloud.firestore {
         && request.resource.data.status == "ACTIVE"
         && request.resource.data.driverApplicationStatus in ["NONE", "PENDING"];
 
-      // READ OWN PROFILE OR ADMIN READS USER
+      // READ USER INFORMATION
+
       allow get: if signedIn()
         && (
           request.auth.uid == userId
           || isAdmin()
+          || isPassengerAssignedToDriver(userId)
         );
 
       allow list: if isAdmin();
 
-      // UPDATE USER PROFILE OR ADMIN APPROVAL
+      // UPDATE USER INFORMATION
+
       allow update: if (
 
         // USER UPDATES OWN PROFILE
@@ -137,11 +174,28 @@ service cloud.firestore {
 
         ||
 
+        // PASSENGER SUBMITS DRIVER APPLICATION
+        (
+          signedIn()
+          && request.auth.uid == userId
+          && resource.data.role == "PASSENGER"
+          && resource.data.status == "ACTIVE"
+          && resource.data.driverApplicationStatus == "NONE"
+          && request.resource.data.diff(resource.data)
+            .affectedKeys().hasOnly([
+              "driverApplicationStatus"
+            ])
+          && request.resource.data.driverApplicationStatus == "PENDING"
+        )
+
+        ||
+
         // ADMIN APPROVES OR REJECTS DRIVER
         (
           isAdmin()
           && request.auth.uid != userId
           && resource.data.role == "PASSENGER"
+          && resource.data.status == "ACTIVE"
           && resource.data.driverApplicationStatus == "PENDING"
           && request.resource.data.diff(resource.data)
             .affectedKeys().hasOnly([
@@ -237,12 +291,30 @@ service cloud.firestore {
         && getAfter(passengerActivePath(request.auth.uid)).data.passengerId == request.auth.uid;
 
       // READ BOOKING
-      allow get: if isApprovedDriver()
-        || isAdmin()
-        || isBookingPassenger(bookingId);
+      allow get: if isAdmin()
+        || isBookingPassenger(bookingId)
+        || (
+          isApprovedDriver()
+          && (
+            (
+              resource.data.status == "PENDING"
+              && resource.data.driverId == ""
+            )
+            ||
+            (
+              resource.data.status == "ACCEPTED"
+              && resource.data.driverId == request.auth.uid
+            )
+          )
+        );
 
       // QUERY AVAILABLE BOOKINGS
-      allow list: if isApprovedDriver() || isAdmin();
+      allow list: if isAdmin()
+        || (
+          isApprovedDriver()
+          && resource.data.status == "PENDING"
+          && resource.data.driverId == ""
+        );
 
       // UPDATE BOOKING
       allow update: if (
@@ -313,10 +385,8 @@ service cloud.firestore {
 
     // BOOKING CONTACTS
 
-
     match /bookingContacts/{bookingId} {
 
-      // CREATE PASSENGER CONTACT
       allow create: if activeRole("PASSENGER")
         && request.resource.data.keys().hasOnly([
           "bookingId",
@@ -338,7 +408,6 @@ service cloud.firestore {
         && request.resource.data.passengerPhone.matches("^09[0-9]{9}$")
         && getAfter(bookingPath(bookingId)).data.bookingId == bookingId;
 
-      // READ CONTACT
       allow get: if signedIn()
         && (
           resource.data.passengerId == request.auth.uid
@@ -355,9 +424,7 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
-
     // DRIVER ACTIVE BOOKINGS
-
 
     match /driverActiveBookings/{driverId} {
 
@@ -369,7 +436,6 @@ service cloud.firestore {
 
       allow list: if false;
 
-      // DRIVER CREATES ACTIVE BOOKING
       allow create: if isApprovedDriver()
         && request.auth.uid == driverId
         && request.resource.data.keys().hasOnly([
@@ -389,29 +455,6 @@ service cloud.firestore {
         && getAfter(bookingPath(request.resource.data.bookingId)).data.status == "ACCEPTED"
         && getAfter(bookingPath(request.resource.data.bookingId)).data.driverId == driverId;
 
-      // DRIVER REPLACES EMPTY ACTIVE BOOKING RECORD
-      allow update: if isApprovedDriver()
-        && request.auth.uid == driverId
-        && resource.data.bookingId == ""
-        && resource.data.driverId == driverId
-        && request.resource.data.keys().hasOnly([
-          "bookingId",
-          "driverId"
-        ])
-        && request.resource.data.keys().hasAll([
-          "bookingId",
-          "driverId"
-        ])
-        && request.resource.data.driverId == driverId
-        && request.resource.data.bookingId is string
-        && request.resource.data.bookingId.size() > 0
-        && exists(bookingPath(request.resource.data.bookingId))
-        && get(bookingPath(request.resource.data.bookingId)).data.status == "PENDING"
-        && get(bookingPath(request.resource.data.bookingId)).data.driverId == ""
-        && getAfter(bookingPath(request.resource.data.bookingId)).data.status == "ACCEPTED"
-        && getAfter(bookingPath(request.resource.data.bookingId)).data.driverId == driverId;
-
-      // DRIVER COMPLETES BOOKING
       allow delete: if isApprovedDriver()
         && request.auth.uid == driverId
         && resource.data.driverId == driverId
@@ -425,7 +468,6 @@ service cloud.firestore {
 
     match /passengerActiveBookings/{passengerId} {
 
-      // READ ACTIVE BOOKING
       allow get: if signedIn()
         && (
           request.auth.uid == passengerId
@@ -443,7 +485,6 @@ service cloud.firestore {
 
       allow list: if false;
 
-      // PASSENGER CREATES ACTIVE BOOKING
       allow create: if activeRole("PASSENGER")
         && request.auth.uid == passengerId
         && request.resource.data.keys().hasOnly([
@@ -463,7 +504,6 @@ service cloud.firestore {
 
       allow update: if false;
 
-      // CANCEL OR COMPLETE BOOKING
       allow delete: if signedIn()
         && resource.data.passengerId == passengerId
         && resource.data.bookingId is string
@@ -488,6 +528,329 @@ service cloud.firestore {
             && getAfter(bookingPath(resource.data.bookingId)).data.status == "COMPLETED"
           )
         );
+    }
+
+    // DRIVER AVAILABILITY
+
+    match /driverAvailability/{driverId} {
+
+      allow create, update: if isApprovedDriver()
+        && request.auth.uid == driverId
+        && request.resource.data.keys().hasOnly([
+          "driverId",
+          "isOnline",
+          "updatedAt"
+        ])
+        && request.resource.data.keys().hasAll([
+          "driverId",
+          "isOnline",
+          "updatedAt"
+        ])
+        && request.resource.data.driverId == driverId
+        && request.resource.data.isOnline is bool
+        && request.resource.data.updatedAt is number;
+
+      allow get: if isAdmin()
+        || (
+          isApprovedDriver()
+          && request.auth.uid == driverId
+        )
+        || isPassengerAssignedToDriver(driverId)
+        || (
+          activeRole("PASSENGER")
+          && resource.data.isOnline == true
+        );
+
+      allow list: if activeRole("PASSENGER")
+        && resource.data.isOnline == true;
+
+      allow delete: if false;
+    }
+
+    // DRIVER LOCATIONS
+
+    match /driverLocations/{driverId} {
+
+      allow create, update: if isApprovedDriver()
+        && request.auth.uid == driverId
+        && request.resource.data.keys().hasOnly([
+          "driverId",
+          "latitude",
+          "longitude",
+          "accuracy",
+          "updatedAt"
+        ])
+        && request.resource.data.keys().hasAll([
+          "driverId",
+          "latitude",
+          "longitude",
+          "accuracy",
+          "updatedAt"
+        ])
+        && request.resource.data.driverId == driverId
+        && request.resource.data.latitude is number
+        && request.resource.data.latitude >= -90
+        && request.resource.data.latitude <= 90
+        && request.resource.data.longitude is number
+        && request.resource.data.longitude >= -180
+        && request.resource.data.longitude <= 180
+        && request.resource.data.accuracy is number
+        && request.resource.data.accuracy >= 0
+        && request.resource.data.updatedAt is number;
+
+      allow get: if isAdmin()
+        || isPassengerAssignedToDriver(driverId);
+
+      allow list: if false;
+      allow delete: if false;
+    }
+
+    // DRIVER RATINGS
+
+    match /driverRatings/{bookingId} {
+
+      allow create: if activeRole("PASSENGER")
+        && request.resource.data.keys().hasOnly([
+          "ratingId",
+          "bookingId",
+          "passengerId",
+          "driverId",
+          "rating",
+          "comment",
+          "createdAt"
+        ])
+        && request.resource.data.keys().hasAll([
+          "ratingId",
+          "bookingId",
+          "passengerId",
+          "driverId",
+          "rating",
+          "comment",
+          "createdAt"
+        ])
+        && request.resource.data.ratingId == bookingId
+        && request.resource.data.bookingId == bookingId
+        && request.resource.data.passengerId == request.auth.uid
+        && request.resource.data.driverId is string
+        && request.resource.data.rating is int
+        && request.resource.data.rating >= 1
+        && request.resource.data.rating <= 5
+        && request.resource.data.comment is string
+        && request.resource.data.comment.size() <= 500
+        && request.resource.data.createdAt is number
+        && isCompletedRideForPassenger(
+          bookingId,
+          request.resource.data.driverId
+        );
+
+      allow get, list: if isAdmin()
+        || activeRole("PASSENGER")
+        || isApprovedDriver();
+
+      allow update, delete: if false;
+    }
+
+    // DRIVER REPORTS
+
+    match /driverReports/{reportId} {
+
+      allow create: if activeRole("PASSENGER")
+        && request.resource.data.keys().hasOnly([
+          "reportId",
+          "bookingId",
+          "passengerId",
+          "driverId",
+          "category",
+          "description",
+          "status",
+          "createdAt"
+        ])
+        && request.resource.data.keys().hasAll([
+          "reportId",
+          "bookingId",
+          "passengerId",
+          "driverId",
+          "category",
+          "description",
+          "status",
+          "createdAt"
+        ])
+        && request.resource.data.reportId == reportId
+        && request.resource.data.bookingId is string
+        && request.resource.data.passengerId == request.auth.uid
+        && request.resource.data.driverId is string
+        && request.resource.data.category is string
+        && request.resource.data.category.size() > 0
+        && request.resource.data.category.size() <= 50
+        && request.resource.data.description is string
+        && request.resource.data.description.size() > 0
+        && request.resource.data.description.size() <= 1000
+        && request.resource.data.status == "PENDING"
+        && request.resource.data.createdAt is number
+        && isCompletedRideForPassenger(
+          request.resource.data.bookingId,
+          request.resource.data.driverId
+        );
+
+      allow get, list: if isAdmin();
+
+      allow update, delete: if false;
+    }
+
+    // TRICYCLE STANDS
+
+    match /tricycleStands/{standId} {
+
+      allow get, list: if true;
+
+      allow create, update: if isAdmin()
+        && request.resource.data.keys().hasOnly([
+          "standId",
+          "name",
+          "latitude",
+          "longitude",
+          "type",
+          "isActive"
+        ])
+        && request.resource.data.keys().hasAll([
+          "standId",
+          "name",
+          "latitude",
+          "longitude",
+          "type",
+          "isActive"
+        ])
+        && request.resource.data.standId == standId
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.latitude is number
+        && request.resource.data.latitude >= -90
+        && request.resource.data.latitude <= 90
+        && request.resource.data.longitude is number
+        && request.resource.data.longitude >= -180
+        && request.resource.data.longitude <= 180
+        && request.resource.data.type in ["SAKAYAN", "BABAAAN"]
+        && request.resource.data.isActive is bool;
+
+      allow delete: if false;
+    }
+
+    // NO-PARKING ZONES
+
+    match /noParkingZones/{zoneId} {
+
+      allow get, list: if true;
+
+      allow create, update: if isAdmin()
+        && request.resource.data.keys().hasOnly([
+          "zoneId",
+          "name",
+          "latitude",
+          "longitude",
+          "radius",
+          "description",
+          "isActive"
+        ])
+        && request.resource.data.keys().hasAll([
+          "zoneId",
+          "name",
+          "latitude",
+          "longitude",
+          "radius",
+          "description",
+          "isActive"
+        ])
+        && request.resource.data.zoneId == zoneId
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.latitude is number
+        && request.resource.data.latitude >= -90
+        && request.resource.data.latitude <= 90
+        && request.resource.data.longitude is number
+        && request.resource.data.longitude >= -180
+        && request.resource.data.longitude <= 180
+        && request.resource.data.radius is number
+        && request.resource.data.radius > 0
+        && request.resource.data.description is string
+        && request.resource.data.isActive is bool;
+
+      allow delete: if false;
+    }
+
+    // PARADA SCHEDULES
+
+    match /paradaSchedules/{scheduleId} {
+
+      allow get, list: if true;
+
+      allow create, update: if isAdmin()
+        && request.resource.data.keys().hasOnly([
+          "scheduleId",
+          "todaName",
+          "standId",
+          "openingTime",
+          "closingTime",
+          "cutOffTime",
+          "isActive"
+        ])
+        && request.resource.data.keys().hasAll([
+          "scheduleId",
+          "todaName",
+          "standId",
+          "openingTime",
+          "closingTime",
+          "cutOffTime",
+          "isActive"
+        ])
+        && request.resource.data.scheduleId == scheduleId
+        && request.resource.data.todaName is string
+        && request.resource.data.todaName.size() > 0
+        && request.resource.data.standId is string
+        && request.resource.data.standId.size() > 0
+        && request.resource.data.openingTime is string
+        && request.resource.data.openingTime.size() > 0
+        && request.resource.data.closingTime is string
+        && request.resource.data.closingTime.size() > 0
+        && request.resource.data.cutOffTime is string
+        && request.resource.data.cutOffTime.size() > 0
+        && request.resource.data.isActive is bool;
+
+      allow delete: if false;
+    }
+
+    // TRICYCLE COUNTS
+
+    match /tricycleCounts/{todaId} {
+
+      allow get, list: if true;
+
+      allow create, update: if isAdmin()
+        && request.resource.data.keys().hasOnly([
+          "todaId",
+          "todaName",
+          "totalTricycles",
+          "availableTricycles",
+          "updatedAt"
+        ])
+        && request.resource.data.keys().hasAll([
+          "todaId",
+          "todaName",
+          "totalTricycles",
+          "availableTricycles",
+          "updatedAt"
+        ])
+        && request.resource.data.todaId == todaId
+        && request.resource.data.todaName is string
+        && request.resource.data.todaName.size() > 0
+        && request.resource.data.totalTricycles is int
+        && request.resource.data.totalTricycles >= 0
+        && request.resource.data.availableTricycles is int
+        && request.resource.data.availableTricycles >= 0
+        && request.resource.data.availableTricycles
+          <= request.resource.data.totalTricycles
+        && request.resource.data.updatedAt is number;
+
+      allow delete: if false;
     }
   }
 }

@@ -5,6 +5,10 @@ import com.example.nasugbutricycleapp.model.User
 
 object UserRepository {
 
+    private const val USERS_COLLECTION = "users"
+    private val phonePattern = Regex("^09[0-9]{9}$")
+
+    // Get currently logged-in user
     fun getCurrentUser(
         onResult: (User?, String?) -> Unit
     ) {
@@ -14,22 +18,36 @@ object UserRepository {
             onResult(null, "No user is currently logged in.")
             return
         }
+
         getUserById(firebaseUser.uid, onResult)
     }
 
+    // Get user by ID
     fun getUserById(
         userId: String,
         onResult: (User?, String?) -> Unit
     ) {
-        FirebaseManager.db.collection("users")
+        if (userId.isBlank()) {
+            onResult(null, "Invalid user ID.")
+            return
+        }
+
+        FirebaseManager.db.collection(USERS_COLLECTION)
             .document(userId)
             .get()
             .addOnSuccessListener { document ->
-                if (document.exists()) {
-                    val user = document.toObject(User::class.java)
-                    onResult(user, null)
-                } else {
+
+                if (!document.exists()) {
                     onResult(null, "User not found.")
+                    return@addOnSuccessListener
+                }
+
+                val user = document.toObject(User::class.java)
+
+                if (user == null) {
+                    onResult(null, "Unable to read user information.")
+                } else {
+                    onResult(user, null)
                 }
             }
             .addOnFailureListener { error ->
@@ -40,6 +58,7 @@ object UserRepository {
             }
     }
 
+    // Update current user's profile
     fun updateProfile(
         name: String,
         username: String,
@@ -47,21 +66,33 @@ object UserRepository {
         onResult: (Boolean, String) -> Unit
     ) {
         val uid = FirebaseManager.auth.currentUser?.uid
+
         if (uid == null) {
             onResult(false, "Please log in first.")
             return
         }
-        if (name.isBlank() || username.isBlank()) {
+
+        val cleanName = name.trim()
+        val cleanUsername = username.trim()
+        val cleanPhone = phoneNumber.trim()
+
+        if (cleanName.isBlank() || cleanUsername.isBlank()) {
             onResult(false, "Name and username are required.")
             return
         }
 
+        if (cleanPhone.isNotBlank() && !phonePattern.matches(cleanPhone)) {
+            onResult(false, "Please enter a valid Philippine mobile number.")
+            return
+        }
+
         val updates = mapOf(
-            "name" to name.trim(),
-            "username" to username.trim(),
-            "phoneNumber" to phoneNumber.trim()
+            "name" to cleanName,
+            "username" to cleanUsername,
+            "phoneNumber" to cleanPhone
         )
-        FirebaseManager.db.collection("users")
+
+        FirebaseManager.db.collection(USERS_COLLECTION)
             .document(uid)
             .update(updates)
             .addOnSuccessListener {
