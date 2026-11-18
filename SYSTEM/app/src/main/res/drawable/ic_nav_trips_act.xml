@@ -14,7 +14,7 @@
 
     <!-- Clock Hands -->
     <path
-        android:fillColor="#00000"
+        android:fillColor="#94A3B8"
         android:strokeColor="#00D2D3"
         android:strokeWidth="2"
         android:strokeLineCap="round"
