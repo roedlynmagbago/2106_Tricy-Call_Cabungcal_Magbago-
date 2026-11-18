@@ -59,7 +59,7 @@
                         android:layout_height="40dp"
                         android:background="@drawable/bg_circle_white"
                         android:padding="10dp"
-                        android:src="@drawable/ic_bus"
+                        android:src="@drawable/ic_tricycle"
                         app:tint="#00D2D3" />
 
                     <!-- Header Text -->
@@ -156,9 +156,7 @@
                             android:layout_height="22dp"
                             android:layout_marginStart="2dp"
                             android:layout_marginBottom="2dp"
-                            android:background="@drawable/bg_circle_white"
                             android:padding="2dp"
-                            android:src="@drawable/ic_verified_green"
                             app:layout_constraintBottom_toBottomOf="@+id/cv_avatar"
                             app:layout_constraintStart_toStartOf="@+id/cv_avatar"
                             app:tint="#00D2D3" />
@@ -563,7 +561,7 @@
                         <ImageView
                             android:layout_width="14dp"
                             android:layout_height="14dp"
-                            android:src="@drawable/ic_star_filled"
+                            android:src="@drawable/ic_star_filled_teal"
                             app:tint="#F59E0B" />
 
                         <TextView
