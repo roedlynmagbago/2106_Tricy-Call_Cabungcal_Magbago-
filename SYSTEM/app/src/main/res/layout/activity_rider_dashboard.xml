@@ -22,11 +22,10 @@
         <!-- Title -->
         <ImageView
             android:id="@+id/ivLogo"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:background="@drawable/bg_circle_teal"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/ic_back_arrow_white"
             android:padding="8dp"
-            android:src="@drawable/ic_tricycle"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -79,13 +78,6 @@
                 android:textColor="#00E5CC"
                 android:textSize="10sp"
                 android:textStyle="bold" />
-
-            <ImageView
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:layout_marginStart="16dp"
-                android:src="@android:drawable/ic_popup_reminder"
-                app:tint="#FFFFFF" />
 
             <ImageView
                 android:layout_width="36dp"
