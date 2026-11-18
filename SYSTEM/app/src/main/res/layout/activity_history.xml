@@ -57,7 +57,7 @@
                         android:layout_weight="1"
                         android:gravity="center"
                         android:letterSpacing="0.15"
-                        android:text="NASUGBU TRICY-CALL"
+                        android:text="NASUGBU TRICY_CALL"
                         android:textColor="#00D2D3"
                         android:textSize="11sp"
                         android:textStyle="bold" />
@@ -405,7 +405,7 @@
                         <androidx.appcompat.widget.AppCompatButton
                             android:layout_width="wrap_content"
                             android:layout_height="40dp"
-                            android:background="@drawable/bg_button_teal_rounded"
+                            android:background="@drawable/bg_teal_button"
                             android:paddingHorizontal="20dp"
                             android:text="Book again"
                             android:textAllCaps="false"
@@ -573,7 +573,7 @@
                         <androidx.appcompat.widget.AppCompatButton
                             android:layout_width="wrap_content"
                             android:layout_height="40dp"
-                            android:background="@drawable/bg_button_teal_rounded"
+                            android:background="@drawable/bg_teal_button"
                             android:paddingHorizontal="20dp"
                             android:text="Book again"
                             android:textAllCaps="false"
