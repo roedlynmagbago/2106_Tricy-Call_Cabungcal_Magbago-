@@ -2,12 +2,17 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Internet Permission -->
     <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- Location Permissions -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
+            android:name=".TricyCallApp"
             android:allowBackup="true"
+            android:usesCleartextTraffic="true"
             android:networkSecurityConfig="@xml/network_security_config"
             android:dataExtractionRules="@xml/data_extraction_rules"
             android:fullBackupContent="@xml/backup_rules"
@@ -16,7 +21,6 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/Theme.NasugbuTricycleApp">
-
         <!-- Login screen: unang bubukas -->
         <activity
                 android:name=".LoginActivity"
@@ -25,18 +29,37 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
 
+        </activity>
         <!-- Create Account screen -->
         <activity
                 android:name=".CreateAccountActivity"
                 android:exported="false" />
-
         <!-- Map screen -->
         <activity
                 android:name=".MapActivity"
                 android:exported="false"
                 android:windowSoftInputMode="adjustResize" />
+        <!-- Book Ride screen -->
+        <activity
+                android:name=".BookRideActivity"
+                android:exported="false" />
+        <!-- Driver screen -->
+        <activity
+                android:name=".DriverActivity"
+                android:exported="false" />
+        <!-- Profile screen -->
+        <activity
+                android:name=".ProfileActivity"
+                android:exported="false" />
+        <!-- Driver Profile screen -->
+        <activity
+                android:name=".DriverProfileActivity"
+                android:exported="false" />
+        <!-- Trip Completed screen -->
+        <activity
+                android:name=".TripCompletedActivity"
+                android:exported="false" />
 
     </application>
 </manifest>

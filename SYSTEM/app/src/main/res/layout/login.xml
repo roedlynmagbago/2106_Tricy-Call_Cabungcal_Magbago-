@@ -163,16 +163,20 @@
 
             <!-- COMMUTER (Active) -->
             <LinearLayout
+                android:id="@+id/cardPassenger"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="6dp"
                 android:layout_weight="1"
                 android:background="@drawable/bg_card_active"
+                android:clickable="true"
+                android:focusable="true"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:padding="12dp">
 
                 <ImageView
+                    android:id="@+id/ivPassengerIcon"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:background="#FFFFFF"
@@ -204,16 +208,20 @@
 
             <!-- TODA DRIVER (Inactive) -->
             <LinearLayout
+                android:id="@+id/cardToda"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="6dp"
                 android:layout_weight="1"
                 android:background="@drawable/bg_card_inactive"
+                android:clickable="true"
+                android:focusable="true"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:padding="12dp">
 
                 <ImageView
+                    android:id="@+id/ivTodaIcon"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:background="#F5F7FA"
@@ -261,6 +269,7 @@
                 android:background="#0A5C53" />
 
             <TextView
+                android:id="@+id/tvVerificationInfo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -297,7 +306,7 @@
                 android:layout_weight="1"
                 android:background="@null"
                 android:inputType="textEmailAddress"
-                android:text="passenger@email.com"
+                android:hint="passenger@email.com"
                 android:textColor="#6B7280"
                 android:textSize="14sp" />
 

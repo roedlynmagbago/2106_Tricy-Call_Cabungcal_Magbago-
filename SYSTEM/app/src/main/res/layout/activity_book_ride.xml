@@ -22,6 +22,7 @@
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:background="@drawable/bg_circle_teal"
+            android:contentDescription="Tricy-Call Logo"
             android:padding="8dp"
             android:src="@drawable/ic_tricycle"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -84,6 +85,7 @@
                 android:src="@drawable/ic_bell" />
 
             <ImageView
+                android:id="@+id/ivHeaderProfile"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:layout_marginStart="16dp"
@@ -94,9 +96,6 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- MAIN SCROLLABLE CONTENT -->
-
-    <!-- BOTTOM NAVIGATION -->
-
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -122,7 +121,11 @@
                     android:layout_height="match_parent"
                     android:background="#E2E8F0">
 
-                    <!-- Placeholder Text for Map -->
+                    <!-- Interactive MapLibre / OpenStreetMap View -->
+                    <org.maplibre.android.maps.MapView
+                        android:id="@+id/mapView"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
 
                     <!-- Zone Tag -->
                     <TextView
@@ -182,6 +185,7 @@
                                 android:textSize="10sp" />
 
                             <TextView
+                                android:id="@+id/tvRouteDistance"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="2.4 km • 7 mins"
@@ -197,20 +201,10 @@
                             android:textColor="#94A3B8"
                             android:textSize="9sp" />
                     </LinearLayout>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="Map View (Nasugbu)"
-                        android:textColor="#94A3B8"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
                 </FrameLayout>
             </androidx.cardview.widget.CardView>
 
             <!-- ROUTE COORDINATES -->
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -228,8 +222,11 @@
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/tv_use_gps_location"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
                     android:drawableStart="@android:drawable/ic_menu_mylocation"
                     android:drawablePadding="4dp"
                     android:drawableTint="#2DD4BF"
@@ -281,7 +278,7 @@
                         android:layout_marginStart="12dp"
                         android:layout_marginTop="4dp"
                         android:layout_marginEnd="16dp"
-                        android:text="Terminal 1 - Nasugbu Public\nMarket (Sakayan)"
+                        android:text="Nasugbu Public Market Terminal"
                         android:textColor="#0F172A"
                         android:textSize="13sp"
                         android:textStyle="bold"
@@ -326,7 +323,7 @@
                         android:layout_marginStart="12dp"
                         android:layout_marginTop="4dp"
                         android:layout_marginEnd="16dp"
-                        android:text="Barangay Wawa Beachfront\n(Babaan)"
+                        android:text="Barangay Wawa Beachfront"
                         android:textColor="#0F172A"
                         android:textSize="13sp"
                         android:textStyle="bold"
@@ -340,6 +337,8 @@
                         android:layout_width="36dp"
                         android:layout_height="36dp"
                         android:background="@drawable/bg_avatar_circle"
+                        android:clickable="true"
+                        android:focusable="true"
                         android:padding="8dp"
                         android:src="@drawable/ic_swap"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -371,10 +370,13 @@
                         android:textSize="11sp" />
 
                     <TextView
+                        android:id="@+id/chip_suggested_1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="8dp"
                         android:background="#F1F5F9"
+                        android:clickable="true"
+                        android:focusable="true"
                         android:paddingHorizontal="12dp"
                         android:paddingVertical="6dp"
                         android:text="Nasugbu Doctors"
@@ -382,20 +384,26 @@
                         android:textSize="11sp" />
 
                     <TextView
+                        android:id="@+id/chip_suggested_2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="8dp"
                         android:background="#F1F5F9"
+                        android:clickable="true"
+                        android:focusable="true"
                         android:paddingHorizontal="12dp"
                         android:paddingVertical="6dp"
-                        android:text="Plaza"
+                        android:text="Plaza Central"
                         android:textColor="#0F172A"
                         android:textSize="11sp" />
 
                     <TextView
+                        android:id="@+id/chip_suggested_3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="#F1F5F9"
+                        android:clickable="true"
+                        android:focusable="true"
                         android:paddingHorizontal="12dp"
                         android:paddingVertical="6dp"
                         android:text="Wawa Pier"
@@ -415,15 +423,18 @@
                 android:textStyle="bold" />
 
             <!-- Normal Ride -->
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_normal_ride"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
+                android:clickable="true"
+                android:focusable="true"
                 app:cardBackgroundColor="#FFFFFF"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="0dp"
                 app:strokeColor="#2DD4BF"
-                app:strokeWidth="1.5dp">
+                app:strokeWidth="2dp">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -460,7 +471,7 @@
                         android:background="#E2E8F0"
                         android:paddingHorizontal="6dp"
                         android:paddingVertical="2dp"
-                        android:text="Shared"
+                        android:text="Standard"
                         android:textColor="#64748B"
                         android:textSize="9sp"
                         android:textStyle="bold"
@@ -474,26 +485,12 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
                         android:layout_marginTop="4dp"
-                        android:text="1-2 passengers, standard municipality"
+                        android:text="Standard municipal tariff fare"
                         android:textColor="#64748B"
                         android:textSize="10sp"
                         app:layout_constraintEnd_toStartOf="@id/tv_normal_price"
                         app:layout_constraintStart_toEndOf="@id/iv_normal"
                         app:layout_constraintTop_toBottomOf="@id/tv_normal_title" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
-                        android:layout_marginTop="4dp"
-                        android:drawableStart="@android:drawable/ic_menu_recent_history"
-                        android:drawablePadding="4dp"
-                        android:drawableTint="#64748B"
-                        android:text="Departs as boarded"
-                        android:textColor="#64748B"
-                        android:textSize="10sp"
-                        app:layout_constraintStart_toEndOf="@id/iv_normal"
-                        app:layout_constraintTop_toBottomOf="@id/tv_normal_sub" />
 
                     <!-- Price and Check Icon -->
                     <TextView
@@ -508,19 +505,23 @@
                         app:layout_constraintTop_toTopOf="@id/iv_normal" />
 
                     <ImageView
+                        android:id="@+id/iv_normal_check"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:src="@drawable/ic_check_circle"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
-            <!-- Round Trip -->
-            <androidx.cardview.widget.CardView
+            <!-- Round Trip / Special -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_special_ride"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
+                android:clickable="true"
+                android:focusable="true"
                 app:cardBackgroundColor="#FFFFFF"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="0dp"
@@ -576,28 +577,14 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
                         android:layout_marginTop="4dp"
-                        android:text="Private cabin, return wait option"
+                        android:text="Private cabin charter fare"
                         android:textColor="#64748B"
                         android:textSize="10sp"
                         app:layout_constraintEnd_toStartOf="@id/tv_special_price"
                         app:layout_constraintStart_toEndOf="@id/iv_special"
                         app:layout_constraintTop_toBottomOf="@id/tv_special_title" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
-                        android:layout_marginTop="4dp"
-                        android:drawableStart="@android:drawable/ic_menu_recent_history"
-                        android:drawablePadding="4dp"
-                        android:drawableTint="#64748B"
-                        android:text="Includes 20 min wait"
-                        android:textColor="#64748B"
-                        android:textSize="10sp"
-                        app:layout_constraintStart_toEndOf="@id/iv_special"
-                        app:layout_constraintTop_toBottomOf="@id/tv_special_sub" />
-
-                    <!-- Price and Uncheck Icon -->
+                    <!-- Price and Check Icon -->
                     <TextView
                         android:id="@+id/tv_special_price"
                         android:layout_width="wrap_content"
@@ -610,13 +597,14 @@
                         app:layout_constraintTop_toTopOf="@id/iv_special" />
 
                     <ImageView
+                        android:id="@+id/iv_special_check"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:src="@drawable/ic_uncheck_circle"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
             <!-- DRIVERS IN QUEUE -->
             <LinearLayout
@@ -636,6 +624,7 @@
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/tv_drivers_online_badge"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_rounded_teal"
@@ -645,19 +634,11 @@
                     android:textColor="#0F172A"
                     android:textSize="9sp"
                     android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:text="View Terminal Map"
-                    android:textColor="#2DD4BF"
-                    android:textSize="10sp"
-                    android:textStyle="bold" />
             </LinearLayout>
 
             <!-- Driver 1 -->
             <androidx.cardview.widget.CardView
+                android:id="@+id/card_driver_1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
@@ -717,13 +698,12 @@
                         app:layout_constraintBottom_toBottomOf="@id/iv_driver1"
                         app:layout_constraintStart_toEndOf="@id/iv_driver1" />
 
-                    <!-- Right Side -->
                     <TextView
                         android:id="@+id/tv_driver1_dist"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="end"
-                        android:text="2m\naway"
+                        android:text="2m away"
                         android:textColor="#0F172A"
                         android:textSize="12sp"
                         android:textStyle="bold"
@@ -746,6 +726,7 @@
 
             <!-- Driver 2 -->
             <androidx.cardview.widget.CardView
+                android:id="@+id/card_driver_2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
@@ -757,15 +738,13 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:padding="12dp">
 
                     <ImageView
                         android:id="@+id/iv_driver2"
                         android:layout_width="44dp"
                         android:layout_height="44dp"
-                        android:layout_marginStart="4dp"
-                        android:layout_marginTop="20dp"
                         android:background="@drawable/bg_avatar_circle"
                         android:padding="8dp"
                         android:src="@drawable/ic_person"
@@ -777,7 +756,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
-                        android:text="Kuya Aris"
+                        android:text="Kuya Danilo"
                         android:textColor="#0F172A"
                         android:textSize="14sp"
                         android:textStyle="bold"
@@ -800,7 +779,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
-                        android:text="Tri #118"
+                        android:text="Tri #084"
                         android:textColor="#0F172A"
                         android:textSize="11sp"
                         android:textStyle="bold"
@@ -812,7 +791,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="end"
-                        android:text="4m\naway"
+                        android:text="4m away"
                         android:textColor="#0F172A"
                         android:textSize="12sp"
                         android:textStyle="bold"
@@ -899,6 +878,7 @@
                             android:textSize="12sp" />
 
                         <TextView
+                            android:id="@+id/tv_fare_base"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="₱40.00"
@@ -922,6 +902,7 @@
                             android:textSize="12sp" />
 
                         <TextView
+                            android:id="@+id/tv_fare_surcharge"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="₱0.00"
@@ -988,6 +969,7 @@
                         </LinearLayout>
 
                         <TextView
+                            android:id="@+id/tv_estimated_total"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="₱40.00"

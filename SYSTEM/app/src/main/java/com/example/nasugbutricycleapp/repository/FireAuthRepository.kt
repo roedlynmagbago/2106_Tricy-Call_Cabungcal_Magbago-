@@ -3,6 +3,7 @@ package com.example.nasugbutricycleapp.repository
 import android.util.Log
 import android.util.Patterns
 import com.example.nasugbutricycleapp.firebase.FirebaseManager
+import com.google.firebase.auth.UserProfileChangeRequest
 
 object FirebaseAuthRepository {
 
@@ -61,44 +62,53 @@ object FirebaseAuthRepository {
                     return@addOnSuccessListener
                 }
 
+                // Update display name in Firebase Auth and ensure token is ready before Firestore save
+                val profileUpdates = UserProfileChangeRequest.Builder()
+                    .setDisplayName(cleanName)
+                    .build()
+
                 val uid = createdUser.uid
 
-                FirestoreUserRepository.saveUser(
-                    userId = uid,
-                    name = cleanName,
-                    username = cleanUsername,
-                    email = cleanEmail,
-                    applyAsDriver = applyAsDriver
-                ) { success ->
+                createdUser.updateProfile(profileUpdates).addOnCompleteListener {
+                    FirestoreUserRepository.saveUser(
+                        userId = uid,
+                        name = cleanName,
+                        username = cleanUsername,
+                        email = cleanEmail,
+                        applyAsDriver = applyAsDriver
+                    ) { success, profileError ->
 
-                    if (success) {
-                        onResult(true, "Registration successful.")
-                    } else {
+                        if (success) {
+                            onResult(true, "Registration successful.")
+                        } else {
+                            val reason = profileError ?: "Failed to save user profile."
+                            Log.e(TAG, "Profile creation failed: $reason")
 
-                        // Roll back Firebase Authentication account
-                        createdUser.delete()
-                            .addOnCompleteListener { task ->
+                            // Roll back Firebase Authentication account
+                            createdUser.delete()
+                                .addOnCompleteListener { task ->
 
-                                FirebaseManager.auth.signOut()
+                                    FirebaseManager.auth.signOut()
 
-                                if (task.isSuccessful) {
-                                    onResult(
-                                        false,
-                                        "Registration failed. Please try again."
-                                    )
-                                } else {
-                                    Log.e(
-                                        TAG,
-                                        "Unable to remove Auth account after profile creation failed.",
-                                        task.exception
-                                    )
+                                    if (task.isSuccessful) {
+                                        onResult(
+                                            false,
+                                            "Registration failed: $reason"
+                                        )
+                                    } else {
+                                        Log.e(
+                                            TAG,
+                                            "Unable to remove Auth account after profile creation failed.",
+                                            task.exception
+                                        )
 
-                                    onResult(
-                                        false,
-                                        "Profile was not saved and account cleanup failed. Please contact support."
-                                    )
+                                        onResult(
+                                            false,
+                                            "Profile was not saved ($reason). Please try again or contact support."
+                                        )
+                                    }
                                 }
-                            }
+                        }
                     }
                 }
             }
@@ -167,25 +177,24 @@ object FirebaseAuthRepository {
 
                         when (role) {
 
-                            "SUPER_ADMIN", "ADMIN", "PASSENGER" -> {
+                            "SUPER_ADMIN", "ADMIN" -> {
                                 onResult(true, role)
                             }
 
                             "DRIVER" -> {
-                                if (driverStatus == "APPROVED") {
+                                onResult(true, "DRIVER")
+                            }
+
+                            "PASSENGER" -> {
+                                if (driverStatus == "APPROVED" || driverStatus == "PENDING") {
                                     onResult(true, "DRIVER")
                                 } else {
-                                    FirebaseManager.auth.signOut()
-                                    onResult(
-                                        false,
-                                        "Driver is not approved."
-                                    )
+                                    onResult(true, "PASSENGER")
                                 }
                             }
 
                             else -> {
-                                FirebaseManager.auth.signOut()
-                                onResult(false, "Invalid user role.")
+                                onResult(true, "PASSENGER")
                             }
                         }
                     }

@@ -1,9 +1,11 @@
 package com.example.nasugbutricycleapp.repository
 
+import android.util.Log
 import com.example.nasugbutricycleapp.firebase.FirebaseManager
 
 object FirestoreUserRepository {
 
+    private const val TAG = "FirestoreUserRepository"
     private const val USERS_COLLECTION = "users"
 
     fun saveUser(
@@ -15,7 +17,7 @@ object FirestoreUserRepository {
         phoneNumber: String = "",
         toda: String = "",
         address: String = "",
-        onResult: (Boolean) -> Unit
+        onResult: (Boolean, String?) -> Unit
     ) {
         val cleanName = name.trim()
         val cleanUsername = username.trim()
@@ -29,19 +31,15 @@ object FirestoreUserRepository {
             cleanUsername.isBlank() ||
             cleanEmail.isBlank()
         ) {
-            onResult(false)
+            onResult(false, "Please fill in all required fields.")
             return
         }
 
         // Make sure the account matches the logged-in Firebase user
         val currentUser = FirebaseManager.auth.currentUser
 
-        if (
-            currentUser == null ||
-            currentUser.uid != userId ||
-            !currentUser.email.equals(cleanEmail, ignoreCase = true)
-        ) {
-            onResult(false)
+        if (currentUser == null || currentUser.uid != userId) {
+            onResult(false, "User session mismatch. Please try again.")
             return
         }
 
@@ -51,10 +49,9 @@ object FirestoreUserRepository {
             "username" to cleanUsername,
             "email" to cleanEmail,
             "phoneNumber" to cleanPhone,
-            "role" to "PASSENGER",
+            "role" to if (applyAsDriver) "DRIVER" else "PASSENGER",
             "status" to "ACTIVE",
-            "driverApplicationStatus" to
-                    if (applyAsDriver) "PENDING" else "NONE",
+            "driverApplicationStatus" to if (applyAsDriver) "APPROVED" else "NONE",
             "toda" to toda.trim(),
             "address" to address.trim()
         )
@@ -63,24 +60,16 @@ object FirestoreUserRepository {
             .collection(USERS_COLLECTION)
             .document(userId)
 
-        // Prevent overwriting an existing user profile
-        FirebaseManager.db.runTransaction<Void?> { transaction ->
-
-            val existingUser = transaction.get(userRef)
-
-            if (existingUser.exists()) {
-                throw IllegalStateException("User profile already exists.")
-            }
-
-            transaction.set(userRef, user)
-
-            null
-        }
+        userRef.set(user)
             .addOnSuccessListener {
-                onResult(true)
+                onResult(true, null)
             }
-            .addOnFailureListener {
-                onResult(false)
+            .addOnFailureListener { error ->
+                Log.e(TAG, "Failed to save user profile to Firestore.", error)
+                onResult(
+                    false,
+                    error.localizedMessage ?: "Failed to save user profile."
+                )
             }
     }
 }

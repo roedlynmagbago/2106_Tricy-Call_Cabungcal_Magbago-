@@ -90,19 +90,21 @@
                 </FrameLayout>
 
                 <TextView
+                    android:id="@+id/tvDriverName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    android:text="Mang Danilo H."
+                    android:text="Loading..."
                     android:textColor="#0F172A"
                     android:textSize="20sp"
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/tvDriverTodaPlate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="TODA #09A • Plate NOS-4821"
+                    android:text="TODA Member"
                     android:textColor="#64748B"
                     android:textSize="12sp" />
             </LinearLayout>
@@ -130,9 +132,10 @@
                         android:gravity="center"
                         android:orientation="vertical">
                         <TextView
+                            android:id="@+id/tvTotalTrips"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="1,245"
+                            android:text="0"
                             android:textColor="#0F172A"
                             android:textSize="18sp"
                             android:textStyle="bold" />
@@ -161,9 +164,10 @@
                             android:gravity="center_vertical"
                             android:orientation="horizontal">
                             <TextView
+                                android:id="@+id/tvDriverRating"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="4.9"
+                                android:text="5.0"
                                 android:textColor="#0F172A"
                                 android:textSize="18sp"
                                 android:textStyle="bold" />
@@ -194,9 +198,10 @@
                         android:gravity="center"
                         android:orientation="vertical">
                         <TextView
+                            android:id="@+id/tvActiveYears"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="3 Years"
+                            android:text="Active"
                             android:textColor="#0F172A"
                             android:textSize="18sp"
                             android:textStyle="bold" />
@@ -261,10 +266,11 @@
                                 android:textColor="#64748B"
                                 android:textSize="11sp" />
                             <TextView
+                                android:id="@+id/tvMobileNumber"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="2dp"
-                                android:text="+63 917 123 4567"
+                                android:text="Not provided"
                                 android:textColor="#0F172A"
                                 android:textSize="14sp"
                                 android:textStyle="bold" />
@@ -303,10 +309,11 @@
                                 android:textColor="#64748B"
                                 android:textSize="11sp" />
                             <TextView
+                                android:id="@+id/tvHomeAddress"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="2dp"
-                                android:text="Brgy. Bucana, Nasugbu, Batangas"
+                                android:text="Nasugbu, Batangas"
                                 android:textColor="#0F172A"
                                 android:textSize="14sp"
                                 android:textStyle="bold" />
@@ -367,10 +374,11 @@
                                 android:textColor="#64748B"
                                 android:textSize="11sp" />
                             <TextView
+                                android:id="@+id/tvTricycleModel"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="2dp"
-                                android:text="Kawasaki Barako 175"
+                                android:text="Standard Tricycle Unit"
                                 android:textColor="#0F172A"
                                 android:textSize="14sp"
                                 android:textStyle="bold" />
@@ -409,10 +417,11 @@
                                 android:textColor="#64748B"
                                 android:textSize="11sp" />
                             <TextView
+                                android:id="@+id/tvPlateNumber"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="2dp"
-                                android:text="NOS-4821"
+                                android:text="Registered Unit"
                                 android:textColor="#0F172A"
                                 android:textSize="14sp"
                                 android:textStyle="bold" />
@@ -430,6 +439,7 @@
                 android:orientation="horizontal">
 
                 <TextView
+                    android:id="@+id/btnEditProfile"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -444,10 +454,12 @@
                     app:drawableTint="#0F172A" />
 
                 <TextView
+                    android:id="@+id/btnLogout"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
                     android:layout_weight="1"
+                    android:background="@drawable/bg_button_outline"
                     android:drawablePadding="6dp"
                     android:gravity="center"
                     android:paddingVertical="12dp"
@@ -480,9 +492,12 @@
 
         <!-- Tab 1: Dashboard -->
         <LinearLayout
+            android:id="@+id/navDashboard"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:clickable="true"
+            android:focusable="true"
             android:gravity="center"
             android:orientation="vertical">
             <ImageView

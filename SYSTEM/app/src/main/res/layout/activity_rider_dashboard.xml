@@ -17,9 +17,6 @@
         android:paddingHorizontal="20dp"
         android:paddingVertical="16dp">
 
-        <!-- Logo -->
-
-        <!-- Title -->
         <ImageView
             android:id="@+id/ivLogo"
             android:layout_width="30dp"
@@ -29,8 +26,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0"
-            app:tint="#0B1B2B" />
+            app:tint="#FFFFFF" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -74,12 +70,13 @@
                 android:background="#1E293B"
                 android:paddingHorizontal="10dp"
                 android:paddingVertical="6dp"
-                android:text="★ Role"
+                android:text="★ Driver"
                 android:textColor="#00E5CC"
                 android:textSize="10sp"
                 android:textStyle="bold" />
 
             <ImageView
+                android:id="@+id/ivHeaderProfile"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:layout_marginStart="12dp"
@@ -142,27 +139,30 @@
                             android:orientation="horizontal">
 
                             <TextView
+                                android:id="@+id/tvDriverName"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Kuya Danilo"
+                                android:text="Loading..."
                                 android:textColor="#FFFFFF"
                                 android:textSize="16sp"
                                 android:textStyle="bold" />
 
                             <TextView
+                                android:id="@+id/tvDriverToda"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="8dp"
                                 android:background="#00E5CC"
                                 android:paddingHorizontal="6dp"
                                 android:paddingVertical="2dp"
-                                android:text="TODA #084"
+                                android:text="TODA Member"
                                 android:textColor="#0B1B2B"
                                 android:textSize="8sp"
                                 android:textStyle="bold" />
                         </LinearLayout>
 
                         <TextView
+                            android:id="@+id/tvDriverRoute"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
@@ -200,24 +200,28 @@
                         android:orientation="vertical">
 
                         <TextView
+                            android:id="@+id/tvDriverStatusBadge"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:background="#00E5CC"
+                            android:clickable="true"
+                            android:focusable="true"
                             android:paddingHorizontal="8dp"
                             android:paddingVertical="4dp"
-                            android:text="● ONLINE"
+                            android:text="● GO ONLINE"
                             android:textColor="#0B1B2B"
                             android:textSize="10sp"
                             android:textStyle="bold" />
 
                         <TextView
+                            android:id="@+id/tvGpsStatus"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="6dp"
                             android:drawableStart="@android:drawable/ic_menu_mylocation"
                             android:drawablePadding="4dp"
                             android:drawableTint="#64748B"
-                            android:text="GPS Locked"
+                            android:text="GPS Offline"
                             android:textColor="#64748B"
                             android:textSize="9sp" />
                     </LinearLayout>
@@ -255,10 +259,11 @@
                             android:textSize="9sp"
                             android:textStyle="bold" />
                         <TextView
+                            android:id="@+id/tvTodayTotal"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:text="₱680.00"
+                            android:text="₱0.00"
                             android:textColor="#0B1B2B"
                             android:textSize="16sp"
                             android:textStyle="bold" />
@@ -266,7 +271,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
-                            android:text="↑ +18%"
+                            android:text="Active Dispatch"
                             android:textColor="#10B981"
                             android:textSize="10sp"
                             android:textStyle="bold" />
@@ -296,10 +301,11 @@
                             android:textSize="9sp"
                             android:textStyle="bold" />
                         <TextView
+                            android:id="@+id/tvTripsDone"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:text="14"
+                            android:text="0"
                             android:textColor="#0B1B2B"
                             android:textSize="16sp"
                             android:textStyle="bold" />
@@ -339,7 +345,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:text="98%"
+                            android:text="100%"
                             android:textColor="#0B1B2B"
                             android:textSize="16sp"
                             android:textStyle="bold" />
@@ -347,7 +353,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
-                            android:text="★ Top Tier"
+                            android:text="★ Verified"
                             android:textColor="#F59E0B"
                             android:textSize="10sp"
                             android:textStyle="bold" />
@@ -357,6 +363,7 @@
 
             <!-- ================= NEW RIDE REQUEST ================= -->
             <androidx.cardview.widget.CardView
+                android:id="@+id/cardRideRequest"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
@@ -383,21 +390,23 @@
                             android:layout_height="8dp"
                             android:background="@drawable/bg_circle_teal" />
                         <TextView
+                            android:id="@+id/tvRequestHeaderTitle"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
                             android:layout_weight="1"
-                            android:text="New Ride Request!"
+                            android:text="Available Ride Requests"
                             android:textColor="#0B1B2B"
                             android:textSize="14sp"
                             android:textStyle="bold" />
                         <TextView
+                            android:id="@+id/tvRequestStatusBadge"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:background="#E0F7FA"
                             android:paddingHorizontal="8dp"
                             android:paddingVertical="4dp"
-                            android:text="⏱ 44s left"
+                            android:text="Live Dispatch"
                             android:textColor="#00E5CC"
                             android:textSize="10sp"
                             android:textStyle="bold" />
@@ -426,16 +435,18 @@
                             android:layout_weight="1"
                             android:orientation="vertical">
                             <TextView
+                                android:id="@+id/tvPassengerName"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Maria Santos"
+                                android:text="Waiting for requests..."
                                 android:textColor="#0B1B2B"
                                 android:textSize="14sp"
                                 android:textStyle="bold" />
                             <TextView
+                                android:id="@+id/tvPassengerStatus"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Student • Verified Commuter"
+                                android:text="Nasugbu Passenger"
                                 android:textColor="#64748B"
                                 android:textSize="10sp" />
                         </LinearLayout>
@@ -485,20 +496,14 @@
                                 android:textSize="9sp"
                                 android:textStyle="bold" />
                             <TextView
+                                android:id="@+id/tvPickupLocation"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="2dp"
-                                android:text="Nasugbu Public Terminal (Sakayan 2)"
+                                android:text="No active pickup location"
                                 android:textColor="#0B1B2B"
                                 android:textSize="12sp"
                                 android:textStyle="bold" />
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
-                                android:text="0.4 km away (approx. 2 min)"
-                                android:textColor="#64748B"
-                                android:textSize="10sp" />
 
                             <View android:layout_width="match_parent" android:layout_height="20dp" />
 
@@ -510,20 +515,14 @@
                                 android:textSize="9sp"
                                 android:textStyle="bold" />
                             <TextView
+                                android:id="@+id/tvDestination"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="2dp"
-                                android:text="Lian Road Intersection"
+                                android:text="No active drop-off destination"
                                 android:textColor="#0B1B2B"
                                 android:textSize="12sp"
                                 android:textStyle="bold" />
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
-                                android:text="2.1 km route total"
-                                android:textColor="#64748B"
-                                android:textSize="10sp" />
                         </LinearLayout>
                     </LinearLayout>
 
@@ -556,9 +555,10 @@
                                 android:textColor="#64748B"
                                 android:textSize="9sp" />
                             <TextView
+                                android:id="@+id/tvFareMode"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Special Chartered"
+                                android:text="Municipal Dispatch Rate"
                                 android:textColor="#0B1B2B"
                                 android:textSize="12sp"
                                 android:textStyle="bold" />
@@ -572,13 +572,14 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="OFFICIAL LTFRB RATE"
+                                android:text="OFFICIAL LGU RATE"
                                 android:textColor="#64748B"
                                 android:textSize="9sp" />
                             <TextView
+                                android:id="@+id/tvFareAmount"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="₱85.00 (Cash)"
+                                android:text="₱40.00"
                                 android:textColor="#0C7B8A"
                                 android:textSize="14sp"
                                 android:textStyle="bold" />
@@ -593,10 +594,11 @@
                         android:orientation="horizontal">
 
                         <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnDeclineRide"
                             android:layout_width="0dp"
                             android:layout_height="50dp"
                             android:layout_weight="1"
-                            android:text="Decline"
+                            android:text="Refresh"
                             android:textAllCaps="false"
                             android:textColor="#64748B"
                             android:textStyle="bold"
@@ -606,6 +608,7 @@
                             android:layout_marginEnd="12dp"/>
 
                         <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnAcceptRide"
                             android:layout_width="0dp"
                             android:layout_height="50dp"
                             android:layout_weight="2"
@@ -667,26 +670,17 @@
                             android:textStyle="bold" />
                     </LinearLayout>
 
-                    <!-- Mini Map Placeholder -->
+                    <!-- Mini Map Container -->
                     <FrameLayout
                         android:layout_width="match_parent"
                         android:layout_height="140dp"
                         android:layout_marginTop="12dp"
                         android:background="#E2E8F0">
 
-                        <!-- Fake Map Grid Background -->
-                        <View
+                        <org.maplibre.android.maps.MapView
+                            android:id="@+id/mapView"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:background="#D1E0EA" />
-
-                        <!-- Center Pin -->
-                        <ImageView
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:layout_gravity="center"
-                            android:src="@android:drawable/ic_menu_mylocation"
-                            app:tint="#EF4444" />
+                            android:layout_height="match_parent" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -748,172 +742,6 @@
                             android:textSize="11sp"
                             android:textStyle="bold"/>
                     </LinearLayout>
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <!-- ================= OPERATOR SERVICES ================= -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:layout_marginBottom="8dp"
-                android:text="OPERATOR SERVICES &amp; COMPLIANCE"
-                android:textColor="#64748B"
-                android:textSize="10sp"
-                android:textStyle="bold" />
-
-            <!-- Menu 1 -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardBackgroundColor="#FFFFFF"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="1dp"
-                app:strokeColor="#E2E8F0"
-                app:strokeWidth="1dp">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="16dp">
-                    <ImageView
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:background="#E0F7FA"
-                        android:padding="6dp"
-                        android:src="@android:drawable/ic_menu_my_calendar"
-                        app:tint="#0C7B8A" />
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="TODA Schedule Today"
-                            android:textColor="#0B1B2B"
-                            android:textSize="13sp"
-                            android:textStyle="bold" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:text="Shift roster &amp; terminal dispatch sequence"
-                            android:textColor="#64748B"
-                            android:textSize="10sp" />
-                    </LinearLayout>
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:src="@android:drawable/ic_media_play"
-                        app:tint="#94A3B8" />
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <!-- Menu 2 -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                app:cardBackgroundColor="#FFFFFF"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="1dp"
-                app:strokeColor="#E2E8F0"
-                app:strokeWidth="1dp">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="16dp">
-                    <ImageView
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:background="#FEE2E2"
-                        android:padding="6dp"
-                        android:src="@android:drawable/ic_dialog_alert"
-                        app:tint="#EF4444" />
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Report No-Parking Obstruction"
-                            android:textColor="#0B1B2B"
-                            android:textSize="13sp"
-                            android:textStyle="bold" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:text="Flag illegal street blocking to Municipal PSO"
-                            android:textColor="#64748B"
-                            android:textSize="10sp" />
-                    </LinearLayout>
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:src="@android:drawable/ic_media_play"
-                        app:tint="#94A3B8" />
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <!-- Menu 3 -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                app:cardBackgroundColor="#FFFFFF"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="1dp"
-                app:strokeColor="#E2E8F0"
-                app:strokeWidth="1dp">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="16dp">
-                    <ImageView
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:background="#E0F7FA"
-                        android:padding="6dp"
-                        android:src="@android:drawable/ic_menu_info_details"
-                        app:tint="#0C7B8A" />
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Fare Matrix Guide"
-                            android:textColor="#0B1B2B"
-                            android:textSize="13sp"
-                            android:textStyle="bold" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:text="Municipal Ordinance 2024 Base Rates"
-                            android:textColor="#64748B"
-                            android:textSize="10sp" />
-                    </LinearLayout>
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:src="@android:drawable/ic_media_play"
-                        app:tint="#94A3B8" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
