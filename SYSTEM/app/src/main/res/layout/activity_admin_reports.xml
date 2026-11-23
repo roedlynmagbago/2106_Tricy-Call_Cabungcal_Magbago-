@@ -1,0 +1,714 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Tricy-Call - Driver Complaints (ADMIN) - COMPLETE, self-contained layout.
+    Static version: the 3 complaint cards are written out so it previews exactly
+    like the design. When wiring real data, replace the cards with a RecyclerView
+    using item_driver_complaint.xml.
+    Requires: com.google.android.material:material (1.9+)
+    Needs in res/: drawable/ic_tricycle, ic_arrow_back, ic_search, ic_shield,
+                   ic_error, ic_route, bg_circle_white ; color/chip_bg_selector
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F1F5F9"
+    android:orientation="vertical"
+    tools:context=".DriverComplaintsActivity">
+
+    <!-- ========== TOP APP BAR ========== -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#111B2E"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="12dp">
+
+        <ImageView
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="@drawable/bg_circle_white"
+            android:contentDescription="Tricy-Call"
+            android:padding="8dp"
+            android:src="@drawable/ic_tricycle"
+            app:tint="#00BFC4" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:letterSpacing="0.1"
+                android:text="TRICY-CALL"
+                android:textColor="#94A3B8"
+                android:textSize="9sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Admin Console"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <com.google.android.material.chip.Chip
+            style="@style/Widget.Material3.Chip.Assist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            android:text="ADMIN"
+            android:textColor="#00D1D1"
+            android:textSize="10sp"
+            app:chipIcon="@drawable/ic_shield"
+            app:chipIconSize="12dp"
+            app:chipIconTint="#00D1D1"
+            app:chipStrokeColor="#00D1D1"
+            app:chipStrokeWidth="1dp" />
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="14dp">
+
+            <!-- ========== TITLE ROW ========== -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/btnBack"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_centerVertical="true"
+                    app:cardBackgroundColor="#FFFFFF"
+                    app:cardCornerRadius="18dp"
+                    app:cardElevation="2dp">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:contentDescription="Back"
+                        android:padding="9dp"
+                        android:src="@drawable/ic_arrow_back"
+                        app:tint="#0F172A" />
+                </com.google.android.material.card.MaterialCardView>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:letterSpacing="0.1"
+                        android:text="NASUGBU MOBILITY PORTAL"
+                        android:textColor="#64748B"
+                        android:textSize="9sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Driver complaints"
+                        android:textColor="#0F172A"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/btnSearch"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:contentDescription="Search complaints"
+                    android:src="@drawable/ic_search"
+                    app:tint="#00BFC4" />
+            </RelativeLayout>
+
+            <!-- ========== SUMMARY ROW ========== -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:orientation="horizontal"
+                android:weightSum="3">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="6dp"
+                    android:layout_weight="1"
+                    app:cardBackgroundColor="#FFFFFF"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="12dp">
+
+                        <TextView
+                            android:id="@+id/tvOpenCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="7"
+                            android:textColor="#DC2626"
+                            android:textSize="22sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Open"
+                            android:textColor="#64748B"
+                            android:textSize="10sp" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="3dp"
+                    android:layout_weight="1"
+                    app:cardBackgroundColor="#FFFFFF"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="12dp">
+
+                        <TextView
+                            android:id="@+id/tvReviewCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="4"
+                            android:textColor="#B45309"
+                            android:textSize="22sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="In review"
+                            android:textColor="#64748B"
+                            android:textSize="10sp" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:layout_weight="1"
+                    app:cardBackgroundColor="#FFFFFF"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="12dp">
+
+                        <TextView
+                            android:id="@+id/tvResolvedCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="23"
+                            android:textColor="#15803D"
+                            android:textSize="22sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Resolved"
+                            android:textColor="#64748B"
+                            android:textSize="10sp" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+
+            <!-- ========== STATUS FILTER ========== -->
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbars="none">
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chipGroupStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:selectionRequired="true"
+                    app:singleLine="true"
+                    app:singleSelection="true">
+
+                    <com.google.android.material.chip.Chip
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:text="All"
+                        android:textSize="12sp"
+                        app:chipBackgroundColor="@color/chip_bg_selector" />
+
+                    <com.google.android.material.chip.Chip
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Open"
+                        android:textSize="12sp"
+                        app:chipBackgroundColor="@color/chip_bg_selector" />
+
+                    <com.google.android.material.chip.Chip
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="In review"
+                        android:textSize="12sp"
+                        app:chipBackgroundColor="@color/chip_bg_selector" />
+
+                    <com.google.android.material.chip.Chip
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Resolved"
+                        android:textSize="12sp"
+                        app:chipBackgroundColor="@color/chip_bg_selector" />
+                </com.google.android.material.chip.ChipGroup>
+            </HorizontalScrollView>
+
+            <!-- ========== CATEGORY FILTER ========== -->
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:scrollbars="none">
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chipGroupCategory"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:singleLine="true"
+                    app:singleSelection="true">
+
+                    <com.google.android.material.chip.Chip
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Fare discrepancy"
+                        android:textSize="11sp" />
+
+                    <com.google.android.material.chip.Chip
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Safety violation"
+                        android:textSize="11sp" />
+
+                    <com.google.android.material.chip.Chip
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Off-route"
+                        android:textSize="11sp" />
+                </com.google.android.material.chip.ChipGroup>
+            </HorizontalScrollView>
+
+            <!-- ========== COMPLAINT 1: FARE DISCREPANCY (OPEN) ========== -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                app:cardBackgroundColor="#FFFFFF"
+                app:cardCornerRadius="18dp"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="14dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:contentDescription="Fare discrepancy"
+                            android:src="@drawable/ic_error"
+                            app:tint="#DC2626" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_weight="1"
+                            android:text="Fare discrepancy"
+                            android:textColor="#0F172A"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <com.google.android.material.chip.Chip
+                            style="@style/Widget.Material3.Chip.Assist"
+                            android:layout_width="wrap_content"
+                            android:layout_height="26dp"
+                            android:clickable="false"
+                            android:text="OPEN"
+                            android:textColor="#B91C1C"
+                            android:textSize="9sp"
+                            android:textStyle="bold"
+                            app:chipBackgroundColor="#FEF2F2"
+                            app:chipStrokeWidth="0dp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Against: Mang Danilo H. · NDS-4821"
+                        android:textColor="#0F172A"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Reported by: Maria S. · 2h ago"
+                        android:textColor="#64748B"
+                        android:textSize="11sp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:background="#F1F5F9"
+                        android:padding="8dp"
+                        android:text="Sakayan to Brgy. Bucana Elem. · 2.0 km · Fare ₱45 (expected ₱30)"
+                        android:textColor="#334155"
+                        android:textSize="11sp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Driver charged more than the posted fare for a short trip."
+                        android:textColor="#0F172A"
+                        android:textSize="12sp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.button.MaterialButton
+                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="40dp"
+                            android:layout_marginEnd="6dp"
+                            android:layout_weight="1"
+                            android:insetTop="0dp"
+                            android:insetBottom="0dp"
+                            android:text="Dismiss"
+                            android:textAllCaps="false"
+                            android:textColor="#475569"
+                            android:textSize="12sp"
+                            app:cornerRadius="20dp"
+                            app:strokeColor="#CBD5E1" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:layout_width="0dp"
+                            android:layout_height="40dp"
+                            android:layout_weight="1"
+                            android:insetTop="0dp"
+                            android:insetBottom="0dp"
+                            android:text="Review"
+                            android:textAllCaps="false"
+                            android:textColor="#0F172A"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            app:backgroundTint="#00D1D1"
+                            app:cornerRadius="20dp" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ========== COMPLAINT 2: SAFETY VIOLATION (OPEN) ========== -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                app:cardBackgroundColor="#FFFFFF"
+                app:cardCornerRadius="18dp"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="14dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:contentDescription="Safety violation"
+                            android:src="@drawable/ic_shield"
+                            app:tint="#DC2626" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_weight="1"
+                            android:text="Safety violation"
+                            android:textColor="#0F172A"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <com.google.android.material.chip.Chip
+                            style="@style/Widget.Material3.Chip.Assist"
+                            android:layout_width="wrap_content"
+                            android:layout_height="26dp"
+                            android:clickable="false"
+                            android:text="OPEN"
+                            android:textColor="#B91C1C"
+                            android:textSize="9sp"
+                            android:textStyle="bold"
+                            app:chipBackgroundColor="#FEF2F2"
+                            app:chipStrokeWidth="0dp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Against: Mang Elmer S. · NDS-2290"
+                        android:textColor="#0F172A"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Reported by: Jun R. · 5h ago"
+                        android:textColor="#64748B"
+                        android:textSize="11sp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:background="#F1F5F9"
+                        android:padding="8dp"
+                        android:text="Wawa Port to Poblacion · 3.4 km · Fare ₱70"
+                        android:textColor="#334155"
+                        android:textSize="11sp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Overspeeding and no safety briefing for the passenger."
+                        android:textColor="#0F172A"
+                        android:textSize="12sp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.button.MaterialButton
+                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="40dp"
+                            android:layout_marginEnd="6dp"
+                            android:layout_weight="1"
+                            android:insetTop="0dp"
+                            android:insetBottom="0dp"
+                            android:text="Dismiss"
+                            android:textAllCaps="false"
+                            android:textColor="#475569"
+                            android:textSize="12sp"
+                            app:cornerRadius="20dp"
+                            app:strokeColor="#CBD5E1" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:layout_width="0dp"
+                            android:layout_height="40dp"
+                            android:layout_weight="1"
+                            android:insetTop="0dp"
+                            android:insetBottom="0dp"
+                            android:text="Review"
+                            android:textAllCaps="false"
+                            android:textColor="#0F172A"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            app:backgroundTint="#00D1D1"
+                            app:cornerRadius="20dp" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ========== COMPLAINT 3: OFF-ROUTE TRIP (IN REVIEW) ========== -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                app:cardBackgroundColor="#FFFFFF"
+                app:cardCornerRadius="18dp"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:padding="14dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:contentDescription="Off-route trip"
+                            android:src="@drawable/ic_route"
+                            app:tint="#B45309" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_weight="1"
+                            android:text="Off-route trip"
+                            android:textColor="#0F172A"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <com.google.android.material.chip.Chip
+                            style="@style/Widget.Material3.Chip.Assist"
+                            android:layout_width="wrap_content"
+                            android:layout_height="26dp"
+                            android:clickable="false"
+                            android:text="IN REVIEW"
+                            android:textColor="#92400E"
+                            android:textSize="9sp"
+                            android:textStyle="bold"
+                            app:chipBackgroundColor="#FEF3C7"
+                            app:chipStrokeWidth="0dp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Against: Mang Kiko T. · NDS-1102"
+                        android:textColor="#0F172A"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Reported by: Ana M. · 1d ago"
+                        android:textColor="#64748B"
+                        android:textSize="11sp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:background="#F1F5F9"
+                        android:padding="8dp"
+                        android:text="Town Proper to Brgy. Aga · 5.1 km · Fare ₱110"
+                        android:textColor="#334155"
+                        android:textSize="11sp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Driver took a longer unapproved shortcut without passenger consent."
+                        android:textColor="#0F172A"
+                        android:textSize="12sp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.button.MaterialButton
+                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="40dp"
+                            android:layout_marginEnd="6dp"
+                            android:layout_weight="1"
+                            android:insetTop="0dp"
+                            android:insetBottom="0dp"
+                            android:text="Dismiss"
+                            android:textAllCaps="false"
+                            android:textColor="#475569"
+                            android:textSize="12sp"
+                            app:cornerRadius="20dp"
+                            app:strokeColor="#CBD5E1" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:layout_width="0dp"
+                            android:layout_height="40dp"
+                            android:layout_weight="1"
+                            android:insetTop="0dp"
+                            android:insetBottom="0dp"
+                            android:text="Resolve"
+                            android:textAllCaps="false"
+                            android:textColor="#0F172A"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            app:backgroundTint="#00D1D1"
+                            app:cornerRadius="20dp" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
