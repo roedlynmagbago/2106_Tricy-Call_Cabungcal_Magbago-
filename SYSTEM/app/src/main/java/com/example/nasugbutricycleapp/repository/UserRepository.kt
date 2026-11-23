@@ -19,7 +19,31 @@ object UserRepository {
             return
         }
 
-        getUserById(firebaseUser.uid, onResult)
+        getUserById(firebaseUser.uid) { user, error ->
+            if (user != null) {
+                // If user.name in Firestore is blank, fall back to Auth displayName or email
+                if (user.name.isBlank()) {
+                    user.name = firebaseUser.displayName
+                        ?: firebaseUser.email?.substringBefore("@")
+                        ?: "User"
+                }
+                if (user.email.isBlank()) {
+                    user.email = firebaseUser.email ?: ""
+                }
+                onResult(user, null)
+            } else {
+                // Fallback User if Firestore document is unreachable or missing
+                val fallbackName = firebaseUser.displayName
+                    ?: firebaseUser.email?.substringBefore("@")
+                    ?: "User"
+                val fallbackUser = User(
+                    userId = firebaseUser.uid,
+                    name = fallbackName,
+                    email = firebaseUser.email ?: ""
+                )
+                onResult(fallbackUser, null)
+            }
+        }
     }
 
     // Get user by ID

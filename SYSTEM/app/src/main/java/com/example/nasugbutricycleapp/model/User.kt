@@ -1,7 +1,7 @@
 package com.example.nasugbutricycleapp.model
 
 open class User(
-    val userId: String = "",
+    var userId: String = "",
     var name: String = "",
     var username: String = "",
     var email: String = "",

@@ -1,32 +1,82 @@
 package com.example.nasugbutricycleapp
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
+import android.text.InputType
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.nasugbutricycleapp.service.AuthService
-import com.example.nasugbutricycleapp.firebase.FirebaseManager
 
 class LoginActivity : AppCompatActivity() {
 
+    private var isPassengerSelected = true
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        FirebaseManager.connectToEmulators()
-
-        android.util.Log.d("FIREBASE_CHECK", "Auth emulator: 192.168.1.25:9099")
-        android.util.Log.d("FIREBASE_CHECK", "Firestore emulator: 192.168.1.25:8080")
-
         setContentView(R.layout.login)
 
+        val btnBack = findViewById<ImageView>(R.id.btnBack)
+        val cardPassenger = findViewById<LinearLayout>(R.id.cardPassenger)
+        val ivPassengerIcon = findViewById<ImageView>(R.id.ivPassengerIcon)
+        val cardToda = findViewById<LinearLayout>(R.id.cardToda)
+        val ivTodaIcon = findViewById<ImageView>(R.id.ivTodaIcon)
+        val tvVerificationInfo = findViewById<TextView>(R.id.tvVerificationInfo)
         val etEmail = findViewById<EditText>(R.id.etEmail)
         val etPassword = findViewById<EditText>(R.id.etPassword)
+        val ivShowPassword = findViewById<ImageView>(R.id.ivShowPassword)
         val btnLogin = findViewById<Button>(R.id.btnLogin)
-        val tvCreateAccount =
-            findViewById<TextView>(R.id.tvCreateAccount)
+        val tvCreateAccount = findViewById<TextView>(R.id.tvCreateAccount)
+
+        btnBack?.setOnClickListener {
+            finish()
+        }
+
+        // Toggle User Type selection (Passenger vs TODA Driver)
+        cardPassenger.setOnClickListener {
+            if (!isPassengerSelected) {
+                isPassengerSelected = true
+                cardPassenger.setBackgroundResource(R.drawable.bg_card_active)
+                ivPassengerIcon.setBackgroundColor(Color.parseColor("#FFFFFF"))
+
+                cardToda.setBackgroundResource(R.drawable.bg_card_inactive)
+                ivTodaIcon.setBackgroundColor(Color.parseColor("#F5F7FA"))
+
+                tvVerificationInfo.text = "Logging in as Verified Passenger (Nasugbu Resident / Guest)"
+                etEmail.hint = "passenger@email.com"
+            }
+        }
+
+        cardToda.setOnClickListener {
+            if (isPassengerSelected) {
+                isPassengerSelected = false
+                cardToda.setBackgroundResource(R.drawable.bg_card_active)
+                ivTodaIcon.setBackgroundColor(Color.parseColor("#FFFFFF"))
+
+                cardPassenger.setBackgroundResource(R.drawable.bg_card_inactive)
+                ivPassengerIcon.setBackgroundColor(Color.parseColor("#F5F7FA"))
+
+                tvVerificationInfo.text = "Logging in as Verified TODA Driver (Franchise Unit)"
+                etEmail.hint = "driver@email.com"
+            }
+        }
+
+        // Toggle Password Visibility
+        var isPasswordVisible = false
+        ivShowPassword.setOnClickListener {
+            isPasswordVisible = !isPasswordVisible
+            if (isPasswordVisible) {
+                etPassword.inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+            } else {
+                etPassword.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+            }
+            etPassword.setSelection(etPassword.text.length)
+        }
 
         btnLogin.setOnClickListener {
             val email = etEmail.text.toString().trim()
@@ -43,7 +93,7 @@ class LoginActivity : AppCompatActivity() {
 
             btnLogin.isEnabled = false
 
-            AuthService.login(email, password) { success, message ->
+            AuthService.login(email, password) { success, roleOrMessage ->
                 runOnUiThread {
                     btnLogin.isEnabled = true
 
@@ -54,14 +104,20 @@ class LoginActivity : AppCompatActivity() {
                             Toast.LENGTH_SHORT
                         ).show()
 
-                        startActivity(
-                            Intent(this, MapActivity::class.java)
-                        )
+                        if (roleOrMessage == "DRIVER") {
+                            startActivity(
+                                Intent(this, DriverActivity::class.java)
+                            )
+                        } else {
+                            startActivity(
+                                Intent(this, MapActivity::class.java)
+                            )
+                        }
                         finish()
                     } else {
                         Toast.makeText(
                             this,
-                            message,
+                            roleOrMessage,
                             Toast.LENGTH_LONG
                         ).show()
                     }

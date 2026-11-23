@@ -128,13 +128,12 @@ service cloud.firestore {
         && request.resource.data.name.size() > 0
         && request.resource.data.username is string
         && request.resource.data.email is string
-        && request.resource.data.email == request.auth.token.email
         && request.resource.data.phoneNumber is string
         && request.resource.data.toda is string
         && request.resource.data.address is string
-        && request.resource.data.role == "PASSENGER"
+        && request.resource.data.role in ["PASSENGER", "DRIVER"]
         && request.resource.data.status == "ACTIVE"
-        && request.resource.data.driverApplicationStatus in ["NONE", "PENDING"];
+        && request.resource.data.driverApplicationStatus in ["NONE", "PENDING", "APPROVED"];
 
       // READ USER INFORMATION
 

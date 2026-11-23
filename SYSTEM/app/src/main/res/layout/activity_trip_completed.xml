@@ -276,17 +276,28 @@
                             app:layout_constraintTop_toBottomOf="@+id/tv_dropoff_label" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    <!-- Map Image -->
-                    <ImageView
-                        android:id="@+id/iv_map"
+                    <!-- Interactive Map Container -->
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/cv_map_container"
                         android:layout_width="0dp"
-                        android:layout_height="100dp"
+                        android:layout_height="160dp"
                         android:layout_marginTop="16dp"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/bg_map_placeholder"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="0dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/route_container" />
+                        app:layout_constraintTop_toBottomOf="@+id/route_container">
+
+                        <FrameLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <org.maplibre.android.maps.MapView
+                                android:id="@+id/mapView"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent" />
+                        </FrameLayout>
+                    </androidx.cardview.widget.CardView>
 
                     <TextView
                         android:id="@+id/tv_gis_verified"
@@ -298,7 +309,7 @@
                         android:textSize="9sp"
                         android:textStyle="bold"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/iv_map" />
+                        app:layout_constraintTop_toBottomOf="@+id/cv_map_container" />
 
                     <!-- Divider -->
                     <View

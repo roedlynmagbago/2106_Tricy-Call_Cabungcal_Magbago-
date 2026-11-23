@@ -163,22 +163,25 @@
 
             <!-- COMMUTER (Active) -->
             <LinearLayout
+                android:id="@+id/cardPassenger"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="6dp"
                 android:layout_weight="1"
-                android:background="@drawable/bg_role_selected"
+                android:background="@drawable/bg_card_active"
+                android:clickable="true"
+                android:focusable="true"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:padding="12dp">
 
                 <ImageView
+                    android:id="@+id/ivPassengerIcon"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:background="#FFFFFF"
                     android:padding="6dp"
-                    android:src="@drawable/ic_commuter_icon"
-                    app:tint="#0F172A" />
+                    android:src="@drawable/ic_commuter_icon" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -190,7 +193,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Passenger"
-                        android:textColor="#0F172A"
+                        android:textColor="#1A1A1A"
                         android:textSize="13sp"
                         android:textStyle="bold" />
 
@@ -198,29 +201,32 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Commuter"
-                        android:textColor="#0F172A"
+                        android:textColor="#6B7280"
                         android:textSize="11sp" />
                 </LinearLayout>
             </LinearLayout>
 
             <!-- TODA DRIVER (Inactive) -->
             <LinearLayout
+                android:id="@+id/cardToda"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="6dp"
                 android:layout_weight="1"
-                android:background="@drawable/bg_role_unselected"
+                android:background="@drawable/bg_card_inactive"
+                android:clickable="true"
+                android:focusable="true"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:padding="12dp">
 
                 <ImageView
+                    android:id="@+id/ivTodaIcon"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:background="#F5F7FA"
                     android:padding="6dp"
-                    android:src="@drawable/ic_tricycle"
-                    app:tint="#64748B" />
+                    android:src="@drawable/ic_tricycle" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -263,6 +269,7 @@
                 android:background="#0A5C53" />
 
             <TextView
+                android:id="@+id/tvVerificationInfo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"

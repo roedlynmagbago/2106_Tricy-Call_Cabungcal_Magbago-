@@ -1,12 +1,19 @@
 package com.example.nasugbutricycleapp
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.nasugbutricycleapp.gis.GISManager
+import com.example.nasugbutricycleapp.service.AuthService
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
@@ -45,7 +52,7 @@ class MapActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         MapLibre.getInstance(this)
-        setContentView(R.layout.activity_map)
+        setContentView(R.layout.map)
 
         mapView = findViewById(R.id.mapView)
         mapView.onCreate(savedInstanceState)
@@ -53,14 +60,21 @@ class MapActivity : AppCompatActivity() {
         fusedLocationClient =
             LocationServices.getFusedLocationProviderClient(this)
 
+        setupProfileAndNavigation()
+
+        findViewById<FloatingActionButton>(R.id.btn_current_location)?.setOnClickListener {
+            checkLocationPermission()
+        }
+
         mapView.getMapAsync { map ->
             mapLibreMap = map
+            map.setPadding(0, 160, 0, 220)
 
             val nasugbu = LatLng(14.0669, 120.6318)
 
             map.cameraPosition = CameraPosition.Builder()
                 .target(nasugbu)
-                .zoom(12.0)
+                .zoom(13.0)
                 .build()
 
             map.setStyle(
@@ -71,6 +85,53 @@ class MapActivity : AppCompatActivity() {
 
                 // Ask for location permission after the map is ready.
                 checkLocationPermission()
+            }
+        }
+    }
+
+    private fun setupProfileAndNavigation() {
+        val tvHeaderUserName = findViewById<TextView>(R.id.tv_header_user_name)
+        val ivProfile = findViewById<ImageView>(R.id.iv_profile)
+        val btnBook = findViewById<MaterialButton>(R.id.btn_book)
+        val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+
+        AuthService.getCurrentUser { user, _ ->
+            runOnUiThread {
+                if (user != null) {
+                    val displayName = user.name.ifBlank {
+                        user.username.ifBlank {
+                            user.email.substringBefore("@")
+                        }
+                    }
+                    if (tvHeaderUserName != null && displayName.isNotBlank()) {
+                        tvHeaderUserName.text = "Welcome, $displayName"
+                    }
+                }
+            }
+        }
+
+        btnBook?.setOnClickListener {
+            startActivity(Intent(this, BookRideActivity::class.java))
+        }
+
+        ivProfile?.setOnClickListener {
+            startActivity(Intent(this, ProfileActivity::class.java))
+        }
+
+        bottomNav?.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_profile -> {
+                    startActivity(Intent(this, ProfileActivity::class.java))
+                    true
+                }
+                R.id.nav_book -> {
+                    startActivity(Intent(this, BookRideActivity::class.java))
+                    true
+                }
+                R.id.nav_home -> {
+                    true
+                }
+                else -> true
             }
         }
     }
